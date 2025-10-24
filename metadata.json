@@ -1,0 +1,5 @@
+{
+  "name": "African Children's Stories Podcast",
+  "description": "A beautiful, modern podcast player to listen to episodes from the African Children's Stories Podcast. Fetches and displays episodes from an RSS feed.",
+  "requestFramePermissions": []
+}
