@@ -9,25 +9,41 @@
 <title>African Children's Stories Podcast</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --or:#E8650A;--or-l:#F4831F;--or-b:#FF9A3C;--or-d:#C4500A;--or-dp:#8B3A08;
   --bg:#FFF5E8;--ww:#FFFBF5;--td:#1A0F00;--tm:#4A2C0A;--tl:#9B6030;
-  --sh:rgba(232,101,10,.15);--shs:rgba(232,101,10,.3);--r:20px;--rs:12px;--nav:68px;
+  --sh:rgba(232,101,10,.15);--shs:rgba(232,101,10,.3);
+  --r:20px;--rs:12px;--nav:68px;
+  --green:#2E7D32;--red:#C62828;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:var(--td);overflow:hidden}
-#app{width:100%;max-width:430px;height:100dvh;max-height:900px;margin:0 auto;background:var(--bg);position:relative;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.5)}
+#app{width:100%;max-width:430px;height:100dvh;max-height:932px;margin:0 auto;background:var(--bg);position:relative;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.5)}
+
+/* STATUS BAR */
 .sb{height:44px;background:var(--or-d);display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;color:#fff;font-size:12px;font-weight:700}
 .sb .t{font-size:15px;font-weight:800}
-.sb-ic{display:flex;gap:5px;align-items:center}
-.sb-ic svg{width:14px;height:14px;fill:#fff}
-.offline-bar{background:var(--or-dp);color:#fff;font-size:12px;font-weight:700;text-align:center;padding:6px 12px;display:none;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
+.sb-r{display:flex;gap:6px;align-items:center}
+.sb-r svg{width:14px;height:14px;fill:#fff}
+.sleep-pill{background:rgba(255,255,255,.25);border-radius:10px;padding:2px 7px;font-size:10px;font-weight:800;display:none;align-items:center;gap:3px}
+.sleep-pill.show{display:flex}
+.sleep-pill svg{width:11px;height:11px;fill:#fff}
+
+/* OFFLINE BAR */
+.offline-bar{background:var(--or-dp);color:#fff;font-size:12px;font-weight:700;text-align:center;padding:5px 12px;display:none;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
 .offline-bar.show{display:flex}
-.offline-bar svg{width:14px;height:14px;fill:#fff;flex-shrink:0}
+.offline-bar svg{width:13px;height:13px;fill:#fff;flex-shrink:0}
+
+/* SCREENS */
 .screens{flex:1;overflow:hidden;position:relative}
-.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;padding-bottom:calc(var(--nav) + 12px);scrollbar-width:none}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;padding-bottom:calc(var(--nav)+12px);scrollbar-width:none;will-change:transform}
 .screen::-webkit-scrollbar{display:none}
 .screen.active{display:flex}
+.screen.slide-in{animation:slideIn .25s cubic-bezier(.4,0,.2,1) forwards}
+.screen.slide-out{animation:slideOut .25s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes slideIn{from{transform:translateX(32px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(-20px);opacity:0}}
+
 /* MINI PLAYER */
 .mini{background:var(--or);margin:0 10px 6px;border-radius:14px;padding:9px 12px;display:none;align-items:center;gap:10px;box-shadow:0 4px 16px var(--shs);cursor:pointer;flex-shrink:0;position:relative;z-index:50;transition:transform .15s}
 .mini.show{display:flex}
@@ -36,12 +52,22 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
 .mini-th img{width:100%;height:100%;object-fit:cover}
 .mini-inf{flex:1;min-width:0}
 .mini-tit{font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini-sub{font-size:11px;color:rgba(255,255,255,.7);font-weight:600}
+.mini-sub{font-size:10px;color:rgba(255,255,255,.75);font-weight:600;display:flex;align-items:center;gap:5px}
+.mini-wave{display:none;align-items:center;gap:1.5px;height:12px}
+.mini-wave.on{display:flex}
+.mini-wave span{width:2.5px;background:rgba(255,255,255,.9);border-radius:2px;animation:wv .8s ease-in-out infinite}
+.mini-wave span:nth-child(1){height:4px;animation-delay:0s}
+.mini-wave span:nth-child(2){height:9px;animation-delay:.12s}
+.mini-wave span:nth-child(3){height:12px;animation-delay:.24s}
+.mini-wave span:nth-child(4){height:9px;animation-delay:.36s}
+.mini-wave span:nth-child(5){height:4px;animation-delay:.48s}
+@keyframes wv{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
 .mini-ctrls{display:flex;gap:5px;align-items:center}
 .mini-btn{background:rgba(255,255,255,.2);border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .mini-btn svg{width:15px;height:15px;fill:#fff}
 .mini-prog{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.2);border-radius:0 0 14px 14px;overflow:hidden}
 .mini-fill{height:100%;background:#fff;width:0%;transition:width .5s linear}
+
 /* BOTTOM NAV */
 .bnav{height:var(--nav);background:#fff;border-top:1.5px solid rgba(232,101,10,.1);display:flex;align-items:center;flex-shrink:0;box-shadow:0 -4px 20px var(--sh);position:relative;z-index:100}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:8px 0;transition:all .2s;color:var(--tl);position:relative}
@@ -51,9 +77,13 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
 .ni span{font-size:10px;font-weight:700;letter-spacing:.2px}
 .ndot{position:absolute;top:5px;width:4px;height:4px;background:var(--or);border-radius:50%;opacity:0;transition:opacity .2s}
 .ni.active .ndot{opacity:1}
-/* HOME */
+.ni .badge{position:absolute;top:3px;right:calc(50% - 18px);background:var(--or);color:#fff;font-size:8px;font-weight:800;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;display:none}
+.ni .badge.show{display:flex}
+
+/* ══════════ HOME ══════════ */
 .h-head{background:linear-gradient(155deg,var(--or-dp) 0%,var(--or) 55%,var(--or-b) 100%);padding:18px 18px 28px;position:relative;overflow:hidden;flex-shrink:0}
-.h-head::before{content:'';position:absolute;width:220px;height:220px;background:rgba(255,255,255,.05);border-radius:50%;top:-80px;right:-50px}
+.h-head::before{content:'';position:absolute;width:240px;height:240px;background:rgba(255,255,255,.05);border-radius:50%;top:-90px;right:-60px}
+.h-head::after{content:'';position:absolute;width:120px;height:120px;background:rgba(255,255,255,.04);border-radius:50%;bottom:-30px;left:10px}
 .h-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .logo-wrap{display:flex;align-items:center;gap:10px}
 .logo-wrap img{height:38px;object-fit:contain;filter:brightness(0) invert(1)}
@@ -81,38 +111,66 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
 .hcard:active{transform:scale(.97)}
 .hcard-th{width:100%;height:104px;background:linear-gradient(135deg,var(--or-l),var(--or-d));position:relative;overflow:hidden}
 .hcard-th img{width:100%;height:100%;object-fit:cover;position:absolute}
-.hcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.35),transparent)}
+.hcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.4),transparent)}
 .hcard-pl{position:absolute;width:34px;height:34px;background:rgba(255,255,255,.92);border-radius:50%;display:flex;align-items:center;justify-content:center;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .hcard-pl svg{width:13px;height:13px;fill:var(--or);margin-left:2px}
 .ep-num{position:absolute;top:7px;left:7px;background:var(--or);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px}
-.dl-badge{position:absolute;top:7px;right:7px;background:rgba(0,0,0,.5);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-.dl-badge svg{width:12px;height:12px;fill:#fff}
+.done-badge{position:absolute;top:7px;right:7px;background:var(--green);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.done-badge svg{width:12px;height:12px;fill:#fff}
+.dl-badge-sm{position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,.55);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.dl-badge-sm svg{width:11px;height:11px;fill:#fff}
 .hcard-body{padding:9px}
 .hcard-tit{font-size:12px;font-weight:800;line-height:1.3;color:var(--td);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:3px}
 .hcard-dur{font-size:11px;color:var(--tl);font-weight:600}
-.li{background:#fff;border-radius:var(--rs);padding:12px;display:flex;gap:10px;cursor:pointer;margin-bottom:9px;box-shadow:0 2px 8px var(--sh);transition:transform .15s}
+
+/* LIST ITEMS */
+.li{background:#fff;border-radius:var(--rs);padding:12px;display:flex;gap:10px;cursor:pointer;margin-bottom:9px;box-shadow:0 2px 8px var(--sh);transition:transform .15s;position:relative}
 .li:active{transform:scale(.99)}
-.li-th{width:56px;height:56px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--or-l),var(--or-d));overflow:hidden}
+.li.done{border-left:3px solid var(--green)}
+.li-th{width:56px;height:56px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--or-l),var(--or-d));overflow:hidden;position:relative}
 .li-th img{width:100%;height:100%;object-fit:cover}
+.li-done-ring{position:absolute;inset:0;border-radius:9px;border:2.5px solid var(--green);pointer-events:none;display:none}
+.li.done .li-done-ring{display:block}
 .li-inf{flex:1;min-width:0}
 .li-tit{font-size:13px;font-weight:800;line-height:1.3;color:var(--td);margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .li-meta{font-size:11px;color:var(--tl);font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .li-meta svg{width:11px;height:11px;fill:var(--tl)}
-.li-dl{display:flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(232,101,10,.08);color:var(--or)}
-.li-dl svg{width:10px;height:10px;fill:var(--or)}
+.li-tag{display:flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px}
+.li-tag.saved{background:rgba(232,101,10,.08);color:var(--or)}
+.li-tag.saved svg{fill:var(--or)}
+.li-tag.done{background:rgba(46,125,50,.1);color:var(--green)}
+.li-tag.done svg{fill:var(--green)}
+.li-prog-bar{position:absolute;bottom:0;left:0;right:0;height:2.5px;background:rgba(232,101,10,.1);border-radius:0 0 var(--rs) var(--rs);overflow:hidden}
+.li-prog-fill{height:100%;background:var(--or);transition:width .3s}
 .li-play{background:var(--or);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;flex-shrink:0;align-self:center;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px var(--shs);transition:transform .15s}
 .li-play:active{transform:scale(.9)}
 .li-play svg{width:13px;height:13px;fill:#fff;margin-left:2px}
 .li-play.pau svg{margin-left:0}
-/* EPISODES PAGE */
+
+/* PULL TO REFRESH */
+.ptr{display:flex;justify-content:center;align-items:center;padding:0;height:0;overflow:hidden;transition:height .2s,padding .2s;flex-shrink:0}
+.ptr.pulling{height:44px;padding:8px 0}
+.ptr.refreshing{height:44px;padding:8px 0}
+.ptr-spin{width:24px;height:24px;border:2.5px solid rgba(232,101,10,.2);border-top-color:var(--or);border-radius:50%;animation:sp .75s linear infinite}
+.ptr-arrow{width:24px;height:24px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.ptr-arrow svg{width:20px;height:20px;fill:var(--or)}
+
+/* ══════════ EPISODES ══════════ */
 .pg-head{background:linear-gradient(155deg,var(--or-dp) 0%,var(--or) 100%);padding:18px 18px 22px;color:#fff;flex-shrink:0}
 .pg-tit{font-family:'Baloo 2',cursive;font-size:21px;font-weight:800;margin-bottom:3px}
 .pg-sub{font-size:12px;color:rgba(255,255,255,.8);font-weight:600}
-.srch{margin:14px 16px 6px;background:#fff;border-radius:12px;display:flex;align-items:center;gap:9px;padding:11px 14px;box-shadow:0 2px 10px var(--sh);flex-shrink:0}
+.srch{margin:14px 16px 0;background:#fff;border-radius:12px;display:flex;align-items:center;gap:9px;padding:11px 14px;box-shadow:0 2px 10px var(--sh);flex-shrink:0}
 .srch svg{width:16px;height:16px;fill:var(--tl);flex-shrink:0}
 .srch input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--td);background:transparent}
 .srch input::placeholder{color:var(--tl)}
-.ec{padding:6px 16px 10px;font-size:12px;font-weight:700;color:var(--tl);flex-shrink:0}
+.srch-clear{background:none;border:none;cursor:pointer;padding:0;display:none}
+.srch-clear svg{width:16px;height:16px;fill:var(--tl)}
+.srch-clear.show{display:block}
+.filter-row{display:flex;gap:8px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;background:#fff;border:1.5px solid rgba(232,101,10,.2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--tl);cursor:pointer;transition:all .15s}
+.filter-chip.on{background:var(--or);border-color:var(--or);color:#fff}
+.ec{padding:8px 16px 10px;font-size:12px;font-weight:700;color:var(--tl);flex-shrink:0}
 .dl-bar{margin:0 16px 10px;background:#fff;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px var(--sh);flex-shrink:0}
 .dl-bar-info{flex:1;min-width:0}
 .dl-bar-tit{font-size:13px;font-weight:800;color:var(--td)}
@@ -125,7 +183,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
 .dl-prog-label{font-size:12px;font-weight:700;color:var(--td);margin-bottom:6px}
 .dl-prog-bar{height:6px;background:rgba(232,101,10,.15);border-radius:10px;overflow:hidden}
 .dl-prog-fill{height:100%;background:linear-gradient(90deg,var(--or-d),var(--or-b));border-radius:10px;width:0%;transition:width .3s}
-/* PLAYER */
+
+/* ══════════ PLAYER ══════════ */
 .pl-screen{background:var(--ww)}
 .pl-head{background:linear-gradient(180deg,var(--or-dp) 0%,var(--or) 100%);padding:14px 18px 36px;display:flex;align-items:center;gap:10px;color:#fff;flex-shrink:0}
 .pl-back{background:rgba(255,255,255,.2);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
@@ -135,36 +194,74 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
 .pl-ht{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pl-sh{background:rgba(255,255,255,.2);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .pl-sh svg{width:17px;height:17px;fill:#fff}
-.art-wrap{display:flex;justify-content:center;padding:0 36px;margin-top:-30px;position:relative;z-index:2;flex-shrink:0}
-.art{width:100%;max-width:260px;aspect-ratio:1;border-radius:22px;overflow:hidden;box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs);background:linear-gradient(135deg,var(--or-l),var(--or-d));position:relative;transition:box-shadow .5s}
-.art img{width:100%;height:100%;object-fit:cover}
+
+/* Artwork with swipe hint */
+.art-wrap{display:flex;justify-content:center;padding:0 36px;margin-top:-30px;position:relative;z-index:2;flex-shrink:0;user-select:none}
+.art{width:100%;max-width:256px;aspect-ratio:1;border-radius:22px;overflow:hidden;box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs);background:linear-gradient(135deg,var(--or-l),var(--or-d));position:relative;transition:transform .15s,box-shadow .5s;cursor:grab}
+.art:active{cursor:grabbing}
 .art.on{animation:aPulse 2.5s ease-in-out infinite}
-@keyframes aPulse{0%,100%{box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs),0 0 0 0 rgba(232,101,10,.3)}50%{box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs),0 0 0 14px rgba(232,101,10,0)}}
+@keyframes aPulse{0%,100%{box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs),0 0 0 0 rgba(232,101,10,.3)}50%{box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs),0 0 0 16px rgba(232,101,10,0)}}
+.art img{width:100%;height:100%;object-fit:cover;pointer-events:none}
+.swipe-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 8px;pointer-events:none;opacity:0;transition:opacity .2s}
+.swipe-hint span{background:rgba(0,0,0,.4);color:#fff;font-size:18px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
 .pl-offline{margin:8px 16px 0;background:rgba(139,58,8,.1);border-radius:10px;padding:7px 12px;display:none;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--or-dp);flex-shrink:0}
 .pl-offline.show{display:flex}
 .pl-offline svg{width:14px;height:14px;fill:var(--or-dp);flex-shrink:0}
-.pl-body{padding:14px 20px 0;flex-shrink:0}
+
+/* Sleep timer pill on player */
+.sleep-active{margin:6px 16px 0;background:rgba(46,125,50,.1);border-radius:10px;padding:7px 12px;display:none;align-items:center;justify-content:space-between;flex-shrink:0}
+.sleep-active.show{display:flex}
+.sleep-active-left{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--green)}
+.sleep-active-left svg{width:14px;height:14px;fill:var(--green)}
+.sleep-cancel{background:none;border:none;cursor:pointer;font-size:11px;font-weight:700;color:var(--red);padding:0}
+
+.pl-body{padding:12px 20px 0;flex-shrink:0}
 .pl-tit{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--td);line-height:1.2;margin-bottom:3px;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .pl-meta{text-align:center;font-size:12px;color:var(--tl);font-weight:600;margin-bottom:14px}
-.prog-bg{width:100%;height:5px;background:rgba(232,101,10,.15);border-radius:10px;cursor:pointer;position:relative;margin-bottom:6px}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--or-d),var(--or-b));border-radius:10px;width:0%;transition:width .5s linear;position:relative}
-.prog-fill::after{content:'';position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:13px;height:13px;background:var(--or);border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px var(--shs)}
-.prog-times{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--tl);margin-bottom:12px}
-.pl-ctrls{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
-.cb{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+
+/* Progress bar — larger touch target */
+.prog-wrap{position:relative;padding:8px 0;margin-bottom:4px;cursor:pointer}
+.prog-bg{width:100%;height:5px;background:rgba(232,101,10,.15);border-radius:10px;position:relative}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--or-d),var(--or-b));border-radius:10px;width:0%;transition:width .4s linear;position:relative}
+.prog-fill::after{content:'';position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:15px;height:15px;background:var(--or);border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px var(--shs);transition:transform .15s}
+.prog-wrap:active .prog-fill::after{transform:translateY(-50%) scale(1.3)}
+.prog-times{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--tl);margin-bottom:10px}
+
+.pl-ctrls{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px}
+.cb{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;position:relative}
 .cb:active{transform:scale(.83)}
 .cb svg{fill:var(--tl)}
+.cb .skip-lbl{position:absolute;font-size:8px;font-weight:800;color:var(--tl);bottom:-1px}
 .pp{width:64px;height:64px;background:linear-gradient(135deg,var(--or),var(--or-d));border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 18px var(--shs);transition:transform .15s,box-shadow .15s}
 .pp:active{transform:scale(.93);box-shadow:0 2px 8px var(--shs)}
 .pp svg{width:26px;height:26px;fill:#fff;margin-left:3px}
 .pp.pau svg{margin-left:0}
-.pl-ext{display:flex;justify-content:space-around;padding:4px 0 10px}
-.eb{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--tl);font-size:10px;font-weight:700;transition:color .2s}
+
+.pl-ext{display:flex;justify-content:space-around;padding:2px 0 8px}
+.eb{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--tl);font-size:10px;font-weight:700;transition:color .2s;min-width:48px}
 .eb svg{width:20px;height:20px;fill:currentColor}
 .eb.on{color:var(--or)}
-.pl-desc{margin:0 16px 12px;background:#fff;border-radius:var(--rs);padding:12px;box-shadow:0 2px 8px var(--sh);font-size:12px;line-height:1.65;color:var(--tm);max-height:100px;overflow-y:auto;scrollbar-width:none;flex-shrink:0}
+
+.pl-desc{margin:0 16px 10px;background:#fff;border-radius:var(--rs);padding:12px;box-shadow:0 2px 8px var(--sh);font-size:12px;line-height:1.65;color:var(--tm);max-height:90px;overflow-y:auto;scrollbar-width:none;flex-shrink:0}
 .pl-desc::-webkit-scrollbar{display:none}
-/* ABOUT */
+
+/* Up Next */
+.up-next{margin:0 16px 12px;flex-shrink:0}
+.un-label{font-size:11px;font-weight:800;color:var(--tl);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.un-item{background:#fff;border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px var(--sh)}
+.un-th{width:40px;height:40px;border-radius:7px;flex-shrink:0;background:linear-gradient(135deg,var(--or-l),var(--or-d));overflow:hidden}
+.un-th img{width:100%;height:100%;object-fit:cover}
+.un-tit{font-size:12px;font-weight:800;color:var(--td);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.un-dur{font-size:11px;color:var(--tl);font-weight:600;white-space:nowrap}
+
+/* ══════════ FAVOURITES ══════════ */
+.favs-empty{text-align:center;padding:60px 24px;color:var(--tl)}
+.favs-empty svg{width:56px;height:56px;fill:rgba(232,101,10,.2);display:block;margin:0 auto 16px}
+.favs-empty-tit{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--td);margin-bottom:8px}
+.favs-empty-sub{font-size:13px;line-height:1.6}
+
+/* ══════════ ABOUT ══════════ */
 .ab-hero{background:linear-gradient(155deg,var(--or-dp) 0%,var(--or) 60%,var(--or-b) 100%);padding:28px 20px 36px;text-align:center;position:relative;overflow:hidden;flex-shrink:0}
 .ab-hero img{height:65px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:10px}
 .ab-htit{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:6px}
@@ -192,35 +289,60 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
 .stor-meta{font-size:11px;color:var(--tl);font-weight:600;text-align:right;margin-bottom:8px}
 .clr-btn{width:100%;background:rgba(232,101,10,.08);color:var(--or);border:1.5px solid rgba(232,101,10,.2);border-radius:10px;padding:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .clr-btn svg{width:14px;height:14px;fill:var(--or)}
+
+/* SLEEP TIMER MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:24px 24px 0 0;padding:20px;width:100%;max-width:430px;box-shadow:0 -8px 40px rgba(0,0,0,.2);animation:modalUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:rgba(0,0,0,.1);border-radius:2px;margin:0 auto 16px}
+.modal-tit{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--td);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--tl);font-weight:600;margin-bottom:18px}
+.timer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.timer-opt{background:var(--bg);border:2px solid rgba(232,101,10,.15);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s}
+.timer-opt:active{transform:scale(.95)}
+.timer-opt.on{background:var(--or);border-color:var(--or)}
+.timer-opt-min{font-family:'Baloo 2',cursive;font-size:22px;font-weight:800;color:var(--or);line-height:1}
+.timer-opt.on .timer-opt-min{color:#fff}
+.timer-opt-lbl{font-size:10px;font-weight:700;color:var(--tl);margin-top:2px}
+.timer-opt.on .timer-opt-lbl{color:rgba(255,255,255,.8)}
+.modal-cancel{width:100%;background:rgba(232,101,10,.08);color:var(--or);border:none;border-radius:12px;padding:13px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
+
 /* UTILS */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;gap:12px;color:var(--tl);font-weight:700;font-size:13px}
 .spin{width:36px;height:36px;border:3px solid rgba(232,101,10,.2);border-top-color:var(--or);border-radius:50%;animation:sp .75s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:36px 20px;color:var(--tl);font-weight:700;font-size:13px}
 .empty svg{width:44px;height:44px;fill:rgba(232,101,10,.25);display:block;margin:0 auto 10px}
-.toast{position:fixed;bottom:calc(var(--nav) + 80px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--td);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast{position:fixed;bottom:calc(var(--nav) + 78px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--td);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;max-width:280px;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <div id="app">
 
+<!-- STATUS BAR -->
 <div class="sb">
   <span class="t" id="clock">9:41</span>
-  <div class="sb-ic">
+  <div class="sb-r">
+    <div class="sleep-pill" id="sleep-pill">
+      <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      <span id="sleep-pill-txt">30m</span>
+    </div>
     <svg viewBox="0 0 24 24" id="net-icon"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
     <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
   </div>
 </div>
 
+<!-- OFFLINE BAR -->
 <div class="offline-bar" id="offline-bar">
   <svg viewBox="0 0 24 24"><path d="M22.99 9C19.15 5.16 13.8 3.76 8.84 4.78L11.3 7.24C14.7 6.88 18.23 8.05 20.78 10.6l2.21-1.6zM19 12.77l-2.34-2.34c-1.07-.51-2.25-.76-3.43-.79L16.88 13c.72.49 1.42 1.08 2.12 1.77zM2.93 2.06L1.44 3.55 4 6.11C2.52 7.1 1.17 8.3.01 9.75l2.18 1.58C3.42 9.9 4.97 8.71 6.72 7.86L8.55 9.7C7.09 10.22 5.7 11 4.46 12.11L6.64 13.7c.95-.88 2.07-1.55 3.29-1.97l2.47 2.47c-.6.15-1.17.38-1.71.68L14.02 18c.54-.51 1.2-.86 1.95-.99l3.38 3.38 1.5-1.5L2.93 2.06zm5.26 15.62l2.21 2.21 2.21-2.21c-1.24-1.24-3.18-1.24-4.42 0z"/></svg>
-  Offline — playing cached episodes
+  Offline — playing saved episodes
 </div>
 
 <div class="screens">
 
-  <!-- HOME -->
+  <!-- ══ HOME ══ -->
   <div class="screen active" id="screen-home">
     <div class="h-head">
       <div class="h-top">
@@ -233,7 +355,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
         </button>
       </div>
-      <div class="feat" onclick="openPlayer(0)">
+      <div class="feat" id="feat-card" onclick="openPlayer(0)">
         <div class="feat-th" id="feat-th"><div class="spin" style="width:22px;height:22px;border-width:2px"></div></div>
         <div class="feat-inf">
           <span class="feat-badge">Latest Episode</span>
@@ -245,6 +367,13 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
         </button>
       </div>
     </div>
+
+    <!-- Continue Listening -->
+    <div class="sec" id="continue-sec" style="display:none">
+      <div class="sec-hd"><div class="sec-tit">Continue Listening</div></div>
+      <div id="continue-list"></div>
+    </div>
+
     <div class="sec">
       <div class="sec-hd"><div class="sec-tit">Recent Stories</div><button class="sec-more" onclick="switchScreen('episodes')">See all →</button></div>
       <div class="hscroll" id="home-horiz"><div class="loading" style="padding:20px 50px"><div class="spin"></div></div></div>
@@ -255,15 +384,26 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
     </div>
   </div>
 
-  <!-- EPISODES -->
+  <!-- ══ EPISODES ══ -->
   <div class="screen" id="screen-episodes">
     <div class="pg-head">
       <div class="pg-tit">All Episodes</div>
       <div class="pg-sub" id="ep-sub">Loading…</div>
     </div>
+    <!-- Pull-to-refresh -->
+    <div class="ptr" id="ptr">
+      <div class="ptr-arrow" id="ptr-arrow"><svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm4 4h8v2H8zm2 4h4v2h-4z" style="display:none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>
+    </div>
     <div class="srch">
       <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
       <input type="text" id="srch-inp" placeholder="Search episodes…" oninput="filterEps(this.value)">
+      <button class="srch-clear" id="srch-clear" onclick="clearSearch()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    </div>
+    <div class="filter-row">
+      <div class="filter-chip on" id="fc-all" onclick="setFilter('all')">All</div>
+      <div class="filter-chip" id="fc-saved" onclick="setFilter('saved')">Downloaded</div>
+      <div class="filter-chip" id="fc-favs" onclick="setFilter('favs')">Favourites</div>
+      <div class="filter-chip" id="fc-unplayed" onclick="setFilter('unplayed')">Unplayed</div>
     </div>
     <div class="ec" id="ep-count">Loading…</div>
     <div class="dl-bar">
@@ -283,7 +423,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
     <div style="padding:0 16px" id="eps-list"><div class="loading"><div class="spin"></div><span>Fetching stories…</span></div></div>
   </div>
 
-  <!-- NOW PLAYING -->
+  <!-- ══ NOW PLAYING ══ -->
   <div class="screen pl-screen" id="screen-player">
     <div class="pl-head">
       <button class="pl-back" onclick="goBack()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
@@ -293,31 +433,80 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
       </div>
       <button class="pl-sh" onclick="shareEp()"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
     </div>
-    <div class="art-wrap"><div class="art" id="art-el"><img id="pl-art" src="" alt="Artwork" onerror="this.style.opacity='0'"></div></div>
+
+    <div class="art-wrap">
+      <div class="art" id="art-el"
+           ontouchstart="swipeStart(event)" ontouchmove="swipeMove(event)" ontouchend="swipeEnd(event)">
+        <img id="pl-art" src="" alt="Artwork" onerror="this.style.opacity='0'">
+        <div class="swipe-hint" id="swipe-hint"><span>‹</span><span>›</span></div>
+      </div>
+    </div>
+
     <div class="pl-offline" id="pl-offline"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Playing downloaded copy</div>
+    <div class="sleep-active" id="sleep-active">
+      <div class="sleep-active-left"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg><span id="sleep-countdown">Sleep: 30:00</span></div>
+      <button class="sleep-cancel" onclick="cancelSleep()">Cancel</button>
+    </div>
+
     <div class="pl-body">
       <div class="pl-tit" id="pl-tit">Loading…</div>
       <div class="pl-meta" id="pl-meta">African Children's Stories</div>
-      <div class="prog-bg" onclick="seekAudio(event)"><div class="prog-fill" id="prog-fill"></div></div>
+
+      <div class="prog-wrap" onclick="seekAudio(event)">
+        <div class="prog-bg"><div class="prog-fill" id="prog-fill"></div></div>
+      </div>
       <div class="prog-times"><span id="cur-t">0:00</span><span id="tot-t">0:00</span></div>
+
       <div class="pl-ctrls">
-        <button class="cb" onclick="skipBack()" title="-15s"><svg viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8.01-8z" fill="#9B6030"/></svg></button>
+        <button class="cb" onclick="skipBack()">
+          <svg viewBox="0 0 24 24" style="width:28px;height:28px"><path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8.01-8z" fill="#9B6030"/></svg>
+          <span class="skip-lbl">15</span>
+        </button>
         <button class="cb" onclick="playPrev()"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" fill="#9B6030"/></svg></button>
         <button class="pp" id="pp-btn" onclick="togglePlay()"><svg viewBox="0 0 24 24" id="pp-icon"><path d="M8 5v14l11-7z"/></svg></button>
         <button class="cb" onclick="playNext()"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M6 18l8.5-6L6 6v12zm8.5-6L18 18V6z" fill="#9B6030"/></svg></button>
-        <button class="cb" onclick="skipFwd()" title="+30s"><svg viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M12.01 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 7.99-8z" fill="#9B6030"/></svg></button>
+        <button class="cb" onclick="skipFwd()">
+          <svg viewBox="0 0 24 24" style="width:28px;height:28px"><path d="M12.01 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 7.99-8z" fill="#9B6030"/></svg>
+          <span class="skip-lbl">30</span>
+        </button>
       </div>
+
       <div class="pl-ext">
         <button class="eb" id="eb-spd" onclick="cycleSpeed()"><svg viewBox="0 0 24 24"><path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"/></svg><span id="spd-lbl">1×</span></button>
+        <button class="eb" id="eb-sleep" onclick="openSleepModal()"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg><span>Sleep</span></button>
         <button class="eb" id="eb-dl" onclick="downloadCurrent()"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg><span id="dl-lbl">Download</span></button>
         <button class="eb" id="eb-fav" onclick="toggleFav()"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>Favourite</span></button>
-        <button class="eb" onclick="openSite()"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg><span>Website</span></button>
       </div>
     </div>
+
     <div class="pl-desc" id="pl-desc">Loading…</div>
+
+    <div class="up-next" id="up-next">
+      <div class="un-label">Up Next</div>
+      <div class="un-item" id="un-item" onclick="playNext()">
+        <div class="un-th"><img id="un-img" src="" alt="" onerror="this.style.opacity='0'"></div>
+        <div class="un-tit" id="un-tit">—</div>
+        <div class="un-dur" id="un-dur"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- ABOUT -->
+  <!-- ══ FAVOURITES ══ -->
+  <div class="screen" id="screen-favs">
+    <div class="pg-head">
+      <div class="pg-tit">Favourites</div>
+      <div class="pg-sub" id="fav-sub">Your saved episodes</div>
+    </div>
+    <div style="padding:16px" id="favs-list">
+      <div class="favs-empty">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <div class="favs-empty-tit">No favourites yet</div>
+        <div class="favs-empty-sub">Tap the heart ♥ on any episode while playing to save it here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ABOUT ══ -->
   <div class="screen" id="screen-about">
     <div class="ab-hero">
       <img src="African-Childrens-Stories-Podcast-Logo.jpeg" alt="Logo" onerror="this.style.display='none'">
@@ -328,7 +517,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
       <div class="stats">
         <div class="stat"><div class="stat-n" id="stat-n">–</div><div class="stat-l">Episodes</div></div>
         <div class="stat"><div class="stat-n" id="stat-dl">0</div><div class="stat-l">Downloaded</div></div>
-        <div class="stat"><div class="stat-n">🌍</div><div class="stat-l">Pan-African</div></div>
+        <div class="stat"><div class="stat-n" id="stat-pl">0</div><div class="stat-l">Played</div></div>
       </div>
       <div class="stor-card">
         <div class="stor-row">
@@ -340,7 +529,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
         <button class="clr-btn" onclick="clearCache()"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Clear Downloaded Episodes</button>
       </div>
       <div class="ab-card">
-        <div class="ab-ctit"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>About</div>
+        <div class="ab-ctit"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>About the Podcast</div>
         <p>African Children's Stories brings the rich tapestry of African folklore, fables, and original stories to children around the world — free to listen, always.</p>
         <a class="ab-link" href="https://africanchildrenstories.edutab.africa/" target="_blank">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
@@ -348,19 +537,23 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
         </a>
       </div>
       <div class="ab-card">
-        <div class="ab-ctit"><svg viewBox="0 0 24 24"><path d="M22.99 9C19.15 5.16 13.8 3.76 8.84 4.78L11.3 7.24C14.7 6.88 18.23 8.05 20.78 10.6l2.21-1.6zM19 12.77l-2.34-2.34c-1.07-.51-2.25-.76-3.43-.79L16.88 13c.72.49 1.42 1.08 2.12 1.77zM2.93 2.06L1.44 3.55 4 6.11C2.52 7.1 1.17 8.3.01 9.75l2.18 1.58C3.42 9.9 4.97 8.71 6.72 7.86L8.55 9.7C7.09 10.22 5.7 11 4.46 12.11L6.64 13.7c.95-.88 2.07-1.55 3.29-1.97l2.47 2.47c-.6.15-1.17.38-1.71.68L14.02 18c.54-.51 1.2-.86 1.95-.99l3.38 3.38 1.5-1.5L2.93 2.06zm5.26 15.62l2.21 2.21 2.21-2.21c-1.24-1.24-3.18-1.24-4.42 0z"/></svg>How Offline Works</div>
-        <p>Tap ↓ Download on any episode to save it. Episodes play even without internet — ideal for areas with limited data coverage.</p>
+        <div class="ab-ctit"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>Sleep Timer & Offline</div>
+        <p>Use the Sleep Timer on the player to stop playback automatically — perfect for bedtime stories. Download episodes to listen anywhere, even without internet.</p>
       </div>
     </div>
   </div>
 
 </div><!-- /screens -->
 
+<!-- MINI PLAYER -->
 <div class="mini" id="mini" onclick="switchScreen('player')">
   <div class="mini-th"><img id="mini-th" src="" alt=""></div>
   <div class="mini-inf">
     <div class="mini-tit" id="mini-tit">—</div>
-    <div class="mini-sub" id="mini-sub">Tap to open</div>
+    <div class="mini-sub">
+      <div class="mini-wave" id="mini-wave"><span></span><span></span><span></span><span></span><span></span></div>
+      <span id="mini-sub-txt">Tap to open</span>
+    </div>
   </div>
   <div class="mini-ctrls" onclick="event.stopPropagation()">
     <button class="mini-btn" onclick="togglePlay()"><svg viewBox="0 0 24 24" id="mini-icon"><path d="M8 5v14l11-7z"/></svg></button>
@@ -369,44 +562,103 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:v
   <div class="mini-prog"><div class="mini-fill" id="mini-fill"></div></div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bnav">
   <div class="ni active" id="ni-home" onclick="switchScreen('home')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></div>
   <div class="ni" id="ni-episodes" onclick="switchScreen('episodes')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M3 9h14V7H3v2zm0 4h14v-2H3v2zm0 4h14v-2H3v2zm16 0h2v-2h-2v2zm0-10v2h2V7h-2zm0 6h2v-2h-2v2z"/></svg><span>Episodes</span></div>
   <div class="ni" id="ni-player" onclick="switchScreen('player')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Playing</span></div>
-  <div class="ni" id="ni-about" onclick="switchScreen('about')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg><span>About</span></div>
+  <div class="ni" id="ni-favs" onclick="switchScreen('favs')"><div class="ndot"></div><div class="badge" id="fav-badge"></div><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>Favourites</span></div>
 </nav>
+
+<!-- SLEEP TIMER MODAL -->
+<div class="modal-bg" id="sleep-modal" onclick="if(event.target===this)closeSleepModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-tit">🌙 Sleep Timer</div>
+    <div class="modal-sub">Playback will stop automatically</div>
+    <div class="timer-grid">
+      <div class="timer-opt" onclick="setSleep(10)"><div class="timer-opt-min">10</div><div class="timer-opt-lbl">minutes</div></div>
+      <div class="timer-opt" onclick="setSleep(20)"><div class="timer-opt-min">20</div><div class="timer-opt-lbl">minutes</div></div>
+      <div class="timer-opt" onclick="setSleep(30)"><div class="timer-opt-min">30</div><div class="timer-opt-lbl">minutes</div></div>
+      <div class="timer-opt" onclick="setSleep(45)"><div class="timer-opt-min">45</div><div class="timer-opt-lbl">minutes</div></div>
+      <div class="timer-opt" onclick="setSleep(60)"><div class="timer-opt-min">60</div><div class="timer-opt-lbl">minutes</div></div>
+      <div class="timer-opt" onclick="setSleep('ep')"><div class="timer-opt-min" style="font-size:15px">End of</div><div class="timer-opt-lbl">episode</div></div>
+    </div>
+    <button class="modal-cancel" onclick="closeSleepModal()">Cancel</button>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 </div>
 <audio id="aud"></audio>
 
 <script>
-// ══ STATE ══
-const DB_NAME='acs-v3', DB_VER=2, S_META='episodes', S_AUDIO='audio';
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+const DB_NAME='acs-v4', DB_VER=3, S_META='episodes', S_AUDIO='audio', S_PROG='progress';
 let episodes=[], curIdx=0, playing=false;
-let spdIdx=0; const SPEEDS=[1,1.25,1.5,2,0.75];
+let spdIdx=0; const SPEEDS=[1,1.25,1.5,1.75,2,0.75];
 let prevScr='home', db=null, cachedAudio=new Set();
 let favs=new Set(JSON.parse(localStorage.getItem('acs_favs')||'[]'));
+let history_played=new Set(JSON.parse(localStorage.getItem('acs_hist')||'[]'));
+let activeFilter='all', searchQ='';
+
+// Sleep timer
+let sleepEnd=null, sleepTick=null, sleepEndEp=false;
+
+// Swipe tracking
+let swX0=0, swDx=0, swActive=false;
+
+// Progress save throttle
+let progSaveT=null;
 
 const aud=document.getElementById('aud');
 
-// ══ CLOCK ══
-(function tick(){ const n=new Date(); document.getElementById('clock').textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes(); setTimeout(tick,30000); })();
+// ══════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════
+(function tick(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();
+  setTimeout(tick,30000);
+})();
 
-// ══ ONLINE STATE ══
-function setOnline(v){ document.getElementById('offline-bar').classList.toggle('show',!v); document.getElementById('net-icon').style.opacity=v?'1':'0.4'; }
+// ══════════════════════════════════════
+// ONLINE STATE
+// ══════════════════════════════════════
+function setOnline(v){
+  document.getElementById('offline-bar').classList.toggle('show',!v);
+  document.getElementById('net-icon').style.opacity=v?'1':'0.4';
+}
 window.addEventListener('online',()=>{ setOnline(true); if(!episodes.length) fetchRSS(); });
 window.addEventListener('offline',()=>setOnline(false));
 setOnline(navigator.onLine);
 
-// ══ INDEXEDDB ══
-function openDB(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,DB_VER); r.onupgradeneeded=e=>{ const d=e.target.result; if(!d.objectStoreNames.contains(S_META)) d.createObjectStore(S_META,{keyPath:'index'}); if(!d.objectStoreNames.contains(S_AUDIO)) d.createObjectStore(S_AUDIO,{keyPath:'url'}); }; r.onsuccess=e=>res(e.target.result); r.onerror=e=>rej(e); }); }
+// ══════════════════════════════════════
+// INDEXEDDB
+// ══════════════════════════════════════
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,DB_VER);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains(S_META)) d.createObjectStore(S_META,{keyPath:'index'});
+      if(!d.objectStoreNames.contains(S_AUDIO)) d.createObjectStore(S_AUDIO,{keyPath:'url'});
+      if(!d.objectStoreNames.contains(S_PROG)) d.createObjectStore(S_PROG,{keyPath:'idx'});
+    };
+    r.onsuccess=e=>res(e.target.result);
+    r.onerror=e=>rej(e);
+  });
+}
 function dbPut(s,o){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readwrite'); tx.objectStore(s).put(o).onsuccess=e=>res(e.target.result); tx.onerror=rej; }catch(e){rej(e);} }); }
 function dbGet(s,k){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readonly'); const r=tx.objectStore(s).get(k); r.onsuccess=e=>res(e.target.result); r.onerror=rej; }catch(e){rej(e);} }); }
 function dbGetAll(s){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readonly'); const r=tx.objectStore(s).getAll(); r.onsuccess=e=>res(e.target.result); r.onerror=rej; }catch(e){rej(e);} }); }
 function dbClear(s){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readwrite'); tx.objectStore(s).clear().onsuccess=()=>res(); tx.onerror=rej; }catch(e){rej(e);} }); }
 
-// ══ RSS FETCH — 3 proxy strategies ══
+// ══════════════════════════════════════
+// RSS FETCH
+// ══════════════════════════════════════
 const PROXIES=[
   ()=>`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://anchor.fm/s/2d3bd0d0/podcast/rss')}&count=200`,
   ()=>`https://api.allorigins.win/get?url=${encodeURIComponent('https://anchor.fm/s/2d3bd0d0/podcast/rss')}`,
@@ -414,29 +666,16 @@ const PROXIES=[
 ];
 
 async function fetchRSS(){
-  // Strategy 1: rss2json JSON API
-  try{
-    const r=await fetch(PROXIES[0](),{signal:AbortSignal.timeout(9000)});
-    if(r.ok){ const d=await r.json(); if(d.status==='ok'&&d.items?.length){ fromRSS2JSON(d); return; } }
-  }catch(e){}
-  // Strategy 2: allorigins raw XML
-  try{
-    const r=await fetch(PROXIES[1](),{signal:AbortSignal.timeout(9000)});
-    if(r.ok){ const d=await r.json(); if(d.contents){ fromXML(d.contents); return; } }
-  }catch(e){}
-  // Strategy 3: corsproxy raw XML
-  try{
-    const r=await fetch(PROXIES[2](),{signal:AbortSignal.timeout(9000)});
-    if(r.ok){ fromXML(await r.text()); return; }
-  }catch(e){}
-  // Fallback: IndexedDB cache
+  try{ const r=await fetch(PROXIES[0](),{signal:AbortSignal.timeout(9000)}); if(r.ok){const d=await r.json();if(d.status==='ok'&&d.items?.length){fromRSS2JSON(d);return;}} }catch(e){}
+  try{ const r=await fetch(PROXIES[1](),{signal:AbortSignal.timeout(9000)}); if(r.ok){const d=await r.json();if(d.contents){fromXML(d.contents);return;}} }catch(e){}
+  try{ const r=await fetch(PROXIES[2](),{signal:AbortSignal.timeout(9000)}); if(r.ok){fromXML(await r.text());return;} }catch(e){}
   fromDB();
 }
 
 function fromRSS2JSON(d){
   const feed=d.feed;
   episodes=d.items.map((it,i)=>({
-    index:i, title:it.title||`Episode ${i+1}`,
+    index:i,title:it.title||`Episode ${i+1}`,
     desc:clean(it.description||it.content||''),
     audio:it.enclosure?.link||'',
     duration:it.itunes_duration||'',
@@ -453,7 +692,7 @@ function fromXML(xml){
   const podImg=doc.querySelector('channel > image > url')?.textContent||'';
   const NS='http://www.itunes.com/dtds/podcast-1.0.dtd';
   episodes=Array.from(items).map((it,i)=>({
-    index:i, title:it.querySelector('title')?.textContent?.trim()||`Episode ${i+1}`,
+    index:i,title:it.querySelector('title')?.textContent?.trim()||`Episode ${i+1}`,
     desc:clean(it.querySelector('description')?.textContent||''),
     audio:it.querySelector('enclosure')?.getAttribute('url')||'',
     duration:it.getElementsByTagNameNS(NS,'duration')[0]?.textContent?.trim()||'',
@@ -480,23 +719,31 @@ function errState(){
   document.getElementById('eps-list').innerHTML=m;
 }
 
-// ══ HELPERS ══
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
 function clean(s){ return s.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'').trim(); }
 function dur(s){ if(!s) return ''; if(s.includes(':')){ const p=s.split(':'); return p.length===3?`${p[0]}h ${p[1]}m`:`${p[0]}m`; } const n=parseInt(s); return n?Math.floor(n/60)+'m':''; }
-function dt(s){ if(!s) return ''; try{ return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+function dt(s){ if(!s) return ''; try{ return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}); }catch(e){ return ''; } }
 function ft(s){ if(!s||isNaN(s)) return '0:00'; const m=Math.floor(s/60),ss=Math.floor(s%60); return m+':'+(ss<10?'0':'')+ss; }
 function toast(msg,dur=2500){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur); }
 
-// ══ RENDER ══
+// ══════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════
 async function renderAll(){
   if(!episodes.length){ errState(); return; }
   try{ const blobs=await dbGetAll(S_AUDIO); cachedAudio=new Set(blobs.map(b=>b.url)); }catch(e){}
+
   document.getElementById('stat-n').textContent=episodes.length;
   document.getElementById('stat-dl').textContent=cachedAudio.size;
+  document.getElementById('stat-pl').textContent=history_played.size;
   document.getElementById('ep-sub').textContent=`${episodes.length} episodes`;
   document.getElementById('ep-count').textContent=`${episodes.length} episodes`;
-  document.getElementById('dl-status').textContent=cachedAudio.size?`${cachedAudio.size} of ${episodes.length} downloaded`:'Save episodes to listen without internet';
-  renderFeat(); renderHoriz(); renderList('home-list',episodes.slice(0,6)); renderList('eps-list',episodes); updateStorInfo();
+  document.getElementById('dl-status').textContent=cachedAudio.size?`${cachedAudio.size} of ${episodes.length} downloaded`:'Save episodes for offline';
+
+  renderFeat(); renderHoriz(); renderList('home-list',episodes.slice(0,6)); renderFiltered();
+  renderFavsList(); renderContinue(); updateStorInfo();
 }
 
 function renderFeat(){
@@ -507,13 +754,14 @@ function renderFeat(){
 }
 
 function renderHoriz(){
-  document.getElementById('home-horiz').innerHTML=episodes.slice(0,8).map((ep,i)=>`
+  document.getElementById('home-horiz').innerHTML=episodes.slice(0,10).map((ep,i)=>`
     <div class="hcard" onclick="openPlayer(${i})">
       <div class="hcard-th">
         ${ep.img?`<img src="${ep.img}" onerror="this.style.display='none'">`:''}
         <div class="hcard-ov"></div>
         <span class="ep-num">#${episodes.length-i}</span>
-        ${cachedAudio.has(ep.audio)?`<div class="dl-badge"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>`:''}
+        ${history_played.has(ep.index)?`<div class="done-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>`:''}
+        ${cachedAudio.has(ep.audio)?`<div class="dl-badge-sm"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>`:''}
         <div class="hcard-pl"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>
       <div class="hcard-body">
@@ -523,35 +771,119 @@ function renderHoriz(){
     </div>`).join('');
 }
 
-function renderList(id,eps){
-  const el=document.getElementById(id);
+// Render episodes with saved position indicators
+async function renderList(id, eps){
+  const el=document.getElementById(id); if(!el) return;
+  // Load all saved positions
+  let positions={};
+  try{ const all=await dbGetAll(S_PROG); all.forEach(p=>positions[p.idx]=p); }catch(e){}
+
   if(!eps.length){ el.innerHTML='<div class="empty">No episodes found.</div>'; return; }
-  el.innerHTML=eps.map(ep=>`
-    <div class="li" onclick="openPlayer(${ep.index})">
-      <div class="li-th">${ep.img?`<img src="${ep.img}" onerror="this.style.opacity='0'">`:''}  </div>
+  el.innerHTML=eps.map(ep=>{
+    const pos=positions[ep.index];
+    const progPct=pos&&pos.dur>0?Math.round((pos.pos/pos.dur)*100):0;
+    const isDone=history_played.has(ep.index);
+    return `
+    <div class="li${isDone?' done':''}" onclick="openPlayer(${ep.index})">
+      <div class="li-th">
+        ${ep.img?`<img src="${ep.img}" onerror="this.style.opacity='0'">`:''}
+        <div class="li-done-ring"></div>
+      </div>
       <div class="li-inf">
         <div class="li-tit">${ep.title}</div>
         <div class="li-meta">
-          ${ep.duration?`<span><svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>${dur(ep.duration)}</span>`:''}
+          ${ep.duration?`<span><svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>${pos&&!isDone?'<b style="color:var(--or)">'+ft(pos.pos)+'</b> / ':''} ${dur(ep.duration)}</span>`:''}
           ${ep.pubDate?`<span>${dt(ep.pubDate)}</span>`:''}
-          ${cachedAudio.has(ep.audio)?`<span class="li-dl"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Saved</span>`:''}
+          ${cachedAudio.has(ep.audio)?`<span class="li-tag saved"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Saved</span>`:''}
+          ${isDone?`<span class="li-tag done"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Played</span>`:''}
         </div>
       </div>
       <button class="li-play ${curIdx===ep.index&&playing?'pau':''}" onclick="event.stopPropagation();playEp(${ep.index})">
         <svg viewBox="0 0 24 24">${curIdx===ep.index&&playing?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>'}</svg>
       </button>
-    </div>`).join('');
+      ${progPct>2&&progPct<98?`<div class="li-prog-bar"><div class="li-prog-fill" style="width:${progPct}%"></div></div>`:''}
+    </div>`}).join('');
+}
+
+async function renderContinue(){
+  if(!db) return;
+  try{
+    const positions=await dbGetAll(S_PROG);
+    const inProgress=positions.filter(p=>p.pos>10&&p.dur>0&&(p.pos/p.dur)<0.95&&!history_played.has(p.idx))
+      .sort((a,b)=>b.at-a.at).slice(0,3);
+    const sec=document.getElementById('continue-sec');
+    const list=document.getElementById('continue-list');
+    if(!inProgress.length){ sec.style.display='none'; return; }
+    sec.style.display='';
+    const eps=inProgress.map(p=>({...episodes[p.idx], _pos:p.pos, _dur:p.dur})).filter(e=>e.title);
+    list.innerHTML=eps.map(ep=>`
+      <div class="li" onclick="openPlayer(${ep.index})" style="border-left:3px solid var(--or-b)">
+        <div class="li-th">${ep.img?`<img src="${ep.img}" onerror="this.style.opacity='0'">`:''}  </div>
+        <div class="li-inf">
+          <div class="li-tit">${ep.title}</div>
+          <div class="li-meta"><span style="color:var(--or);font-weight:700">${ft(ep._pos)} / ${ft(ep._dur)} left</span></div>
+        </div>
+        <button class="li-play" onclick="event.stopPropagation();playEp(${ep.index})">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="li-prog-bar"><div class="li-prog-fill" style="width:${Math.round((ep._pos/ep._dur)*100)}%"></div></div>
+      </div>`).join('');
+  }catch(e){}
+}
+
+function renderFiltered(){
+  let eps=episodes;
+  if(activeFilter==='saved') eps=eps.filter(ep=>cachedAudio.has(ep.audio));
+  else if(activeFilter==='favs') eps=eps.filter(ep=>favs.has(ep.index));
+  else if(activeFilter==='unplayed') eps=eps.filter(ep=>!history_played.has(ep.index));
+  if(searchQ) eps=eps.filter(ep=>ep.title.toLowerCase().includes(searchQ)||ep.desc.toLowerCase().includes(searchQ));
+  document.getElementById('ep-count').textContent=`${eps.length} of ${episodes.length} episodes`;
+  renderList('eps-list',eps);
 }
 
 function filterEps(q){
-  const f=q.trim()?episodes.filter(ep=>ep.title.toLowerCase().includes(q.toLowerCase())||ep.desc.toLowerCase().includes(q.toLowerCase())):episodes;
-  document.getElementById('ep-count').textContent=`${f.length} of ${episodes.length} episodes`;
-  renderList('eps-list',f);
+  searchQ=q.trim().toLowerCase();
+  document.getElementById('srch-clear').classList.toggle('show',!!q);
+  renderFiltered();
 }
 
-// ══ PLAYER ══
+function clearSearch(){ document.getElementById('srch-inp').value=''; filterEps(''); }
+
+function setFilter(f){
+  activeFilter=f;
+  ['all','saved','favs','unplayed'].forEach(id=>{
+    document.getElementById('fc-'+id)?.classList.toggle('on',id===f);
+  });
+  renderFiltered();
+}
+
+function renderFavsList(){
+  const el=document.getElementById('favs-list');
+  const sub=document.getElementById('fav-sub');
+  const badge=document.getElementById('fav-badge');
+
+  const favEps=episodes.filter(ep=>favs.has(ep.index));
+  badge.textContent=favs.size||'';
+  badge.classList.toggle('show',favs.size>0);
+  sub.textContent=`${favs.size} saved episode${favs.size!==1?'s':''}`;
+
+  if(!favEps.length){
+    el.innerHTML=`<div class="favs-empty">
+      <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <div class="favs-empty-tit">No favourites yet</div>
+      <div class="favs-empty-sub">Tap the ♥ on any episode while playing to save it here.</div>
+    </div>`;
+    return;
+  }
+  renderList('favs-list', favEps);
+}
+
+// ══════════════════════════════════════
+// PLAYER
+// ══════════════════════════════════════
 async function openPlayer(idx){
   curIdx=idx; const ep=episodes[idx]; if(!ep) return;
+
   document.getElementById('pl-head-tit').textContent=ep.title;
   document.getElementById('pl-tit').textContent=ep.title;
   document.getElementById('pl-meta').textContent=(dt(ep.pubDate)||'')+(ep.duration?` · ${dur(ep.duration)}`:'');
@@ -559,22 +891,56 @@ async function openPlayer(idx){
   document.getElementById('pl-art').src=ep.img||'';
   document.getElementById('mini-tit').textContent=ep.title;
   if(ep.img) document.getElementById('mini-th').src=ep.img;
+
+  // Up next
+  const nextEp=episodes[idx+1];
+  const unEl=document.getElementById('up-next');
+  if(nextEp){ unEl.style.display=''; document.getElementById('un-tit').textContent=nextEp.title; document.getElementById('un-dur').textContent=dur(nextEp.duration)||''; if(nextEp.img) document.getElementById('un-img').src=nextEp.img; }
+  else unEl.style.display='none';
+
   updateFavBtn(); updateDLBtn();
   switchScreen('player');
 
-  // Use cached blob if available, else stream
+  // Offline blob vs stream
   const offEl=document.getElementById('pl-offline');
+  let src=ep.audio;
+  let isOffline=false;
   try{
     const blob=db?await dbGet(S_AUDIO,ep.audio):null;
-    if(blob?.data){
-      const url=URL.createObjectURL(new Blob([blob.data],{type:'audio/mpeg'}));
-      if(aud.src!==url){ aud.src=url; aud.load(); }
-      offEl.classList.add('show');
-    } else {
-      if(ep.audio&&aud.src!==ep.audio){ aud.src=ep.audio; aud.load(); }
-      offEl.classList.remove('show');
+    if(blob?.data){ src=URL.createObjectURL(new Blob([blob.data],{type:'audio/mpeg'})); isOffline=true; }
+  }catch(e){}
+  offEl.classList.toggle('show',isOffline);
+
+  if(aud.src!==src){ aud.src=src; aud.load(); }
+
+  // Restore saved position
+  try{
+    const savedPos=db?await dbGet(S_PROG,idx):null;
+    if(savedPos?.pos>5 && !history_played.has(idx)){
+      aud.addEventListener('loadedmetadata',function seek(){
+        aud.currentTime=savedPos.pos; aud.removeEventListener('loadedmetadata',seek);
+      });
     }
-  }catch(e){ if(ep.audio&&aud.src!==ep.audio){ aud.src=ep.audio; aud.load(); } offEl.classList.remove('show'); }
+  }catch(e){}
+
+  // Media Session
+  updateMediaSession(ep);
+}
+
+function updateMediaSession(ep){
+  if(!('mediaSession' in navigator)) return;
+  navigator.mediaSession.metadata=new MediaMetadata({
+    title:ep.title,
+    artist:'African Children\'s Stories',
+    album:'African Children\'s Stories Podcast',
+    artwork:[{src:ep.img||'',sizes:'512x512',type:'image/jpeg'}],
+  });
+  navigator.mediaSession.setActionHandler('play',()=>togglePlay());
+  navigator.mediaSession.setActionHandler('pause',()=>togglePlay());
+  navigator.mediaSession.setActionHandler('previoustrack',()=>playPrev());
+  navigator.mediaSession.setActionHandler('nexttrack',()=>playNext());
+  navigator.mediaSession.setActionHandler('seekbackward',()=>skipBack());
+  navigator.mediaSession.setActionHandler('seekforward',()=>skipFwd());
 }
 
 function playEp(idx){ openPlayer(idx).then(()=>{ aud.play().then(()=>setPlaying(true)).catch(()=>{}); }); }
@@ -582,7 +948,7 @@ function playEp(idx){ openPlayer(idx).then(()=>{ aud.play().then(()=>setPlaying(
 function togglePlay(){
   if(!aud.src&&episodes.length){ playEp(curIdx); return; }
   if(playing){ aud.pause(); }
-  else{ aud.play().then(()=>setPlaying(true)).catch(e=>toast('Cannot play: '+e.message)); }
+  else { aud.play().then(()=>setPlaying(true)).catch(e=>toast('Cannot play: '+e.message)); }
 }
 
 function setPlaying(v){
@@ -591,9 +957,14 @@ function setPlaying(v){
   document.getElementById('pp-icon').innerHTML=pi;
   document.getElementById('mini-icon').innerHTML=pi;
   document.getElementById('pp-btn').classList.toggle('pau',v);
-  document.getElementById('mini-sub').textContent=v?'Now playing':'Paused';
+  const wave=document.getElementById('mini-wave');
+  wave.classList.toggle('on',v);
+  document.getElementById('mini-sub-txt').textContent=v?'':' Paused';
   document.getElementById('mini').classList.add('show');
   document.getElementById('art-el').classList.toggle('on',v);
+  if('mediaSession' in navigator) navigator.mediaSession.playbackState=v?'playing':'paused';
+
+  // Refresh play buttons
   document.querySelectorAll('.li-play').forEach(b=>{
     const m=b.getAttribute('onclick')?.match(/\d+/); const i=m?parseInt(m[0]):-1;
     b.classList.toggle('pau',i===curIdx&&v);
@@ -601,32 +972,114 @@ function setPlaying(v){
   });
 }
 
-function playNext(){ if(curIdx<episodes.length-1) playEp(curIdx+1); }
+function playNext(){ if(curIdx<episodes.length-1) playEp(curIdx+1); else toast('No more episodes'); }
 function playPrev(){ if(aud.currentTime>3){aud.currentTime=0;return;} if(curIdx>0) playEp(curIdx-1); }
-function skipBack(){ aud.currentTime=Math.max(0,aud.currentTime-15); }
-function skipFwd(){ aud.currentTime=Math.min(aud.duration||0,aud.currentTime+30); }
+function skipBack(){ aud.currentTime=Math.max(0,aud.currentTime-15); toast('−15s'); }
+function skipFwd(){ aud.currentTime=Math.min(aud.duration||0,aud.currentTime+30); toast('+30s'); }
 function seekAudio(e){ if(!aud.duration) return; const r=e.currentTarget.getBoundingClientRect(); aud.currentTime=((e.clientX-r.left)/r.width)*aud.duration; }
-function cycleSpeed(){ spdIdx=(spdIdx+1)%SPEEDS.length; aud.playbackRate=SPEEDS[spdIdx]; document.getElementById('spd-lbl').textContent=SPEEDS[spdIdx]+'×'; }
+function cycleSpeed(){ spdIdx=(spdIdx+1)%SPEEDS.length; aud.playbackRate=SPEEDS[spdIdx]; document.getElementById('spd-lbl').textContent=SPEEDS[spdIdx]+'×'; toast('Speed: '+SPEEDS[spdIdx]+'×'); }
 
-// ══ DOWNLOAD ══
+// ══════════════════════════════════════
+// SWIPE GESTURES (artwork → change episode)
+// ══════════════════════════════════════
+function swipeStart(e){ swX0=e.touches[0].clientX; swActive=true; }
+function swipeMove(e){
+  if(!swActive) return;
+  swDx=e.touches[0].clientX-swX0;
+  const art=document.getElementById('art-el');
+  art.style.transform=`translateX(${swDx*0.3}px) rotate(${swDx*0.02}deg)`;
+  document.getElementById('swipe-hint').style.opacity=Math.min(Math.abs(swDx)/60,0.8);
+}
+function swipeEnd(e){
+  const art=document.getElementById('art-el');
+  art.style.transform=''; document.getElementById('swipe-hint').style.opacity=0;
+  if(!swActive) return; swActive=false;
+  if(swDx<-60){ playNext(); }
+  else if(swDx>60){ playPrev(); }
+  swDx=0;
+}
+
+// ══════════════════════════════════════
+// PROGRESS SAVE & HISTORY
+// ══════════════════════════════════════
+async function saveProgress(){
+  if(!db||!aud.duration) return;
+  try{
+    await dbPut(S_PROG,{idx:curIdx,pos:aud.currentTime,dur:aud.duration,at:Date.now()});
+  }catch(e){}
+}
+
+function markPlayed(idx){
+  if(history_played.has(idx)) return;
+  history_played.add(idx);
+  localStorage.setItem('acs_hist',JSON.stringify([...history_played]));
+  document.getElementById('stat-pl').textContent=history_played.size;
+}
+
+// ══════════════════════════════════════
+// SLEEP TIMER
+// ══════════════════════════════════════
+function openSleepModal(){ document.getElementById('sleep-modal').classList.add('show'); }
+function closeSleepModal(){ document.getElementById('sleep-modal').classList.remove('show'); }
+
+function setSleep(mins){
+  closeSleepModal();
+  clearInterval(sleepTick); sleepEndEp=false;
+
+  if(mins==='ep'){
+    sleepEndEp=true;
+    document.getElementById('sleep-active').classList.add('show');
+    document.getElementById('sleep-countdown').textContent='Sleep: end of episode';
+    document.getElementById('sleep-pill').classList.add('show');
+    document.getElementById('sleep-pill-txt').textContent='End';
+    document.getElementById('eb-sleep').classList.add('on');
+    toast('😴 Sleep timer: end of episode');
+    return;
+  }
+
+  sleepEnd=Date.now()+(mins*60000);
+  document.getElementById('sleep-active').classList.add('show');
+  document.getElementById('sleep-pill').classList.add('show');
+  document.getElementById('eb-sleep').classList.add('on');
+  toast(`😴 Sleep timer: ${mins} minutes`);
+
+  sleepTick=setInterval(()=>{
+    const rem=Math.max(0,sleepEnd-Date.now());
+    const m=Math.floor(rem/60000), s=Math.floor((rem%60000)/1000);
+    const txt=m+':'+(s<10?'0':'')+s;
+    document.getElementById('sleep-countdown').textContent='Sleep: '+txt;
+    document.getElementById('sleep-pill-txt').textContent=txt;
+    if(rem<=0){ aud.pause(); cancelSleep(); toast('😴 Sleep timer ended'); }
+  },1000);
+}
+
+function cancelSleep(){
+  clearInterval(sleepTick); sleepEnd=null; sleepEndEp=false;
+  document.getElementById('sleep-active').classList.remove('show');
+  document.getElementById('sleep-pill').classList.remove('show');
+  document.getElementById('eb-sleep').classList.remove('on');
+}
+
+// ══════════════════════════════════════
+// DOWNLOAD
+// ══════════════════════════════════════
 async function downloadEp(ep){
   if(!ep?.audio||!db) return false;
   try{
     const ex=await dbGet(S_AUDIO,ep.audio); if(ex?.data){ cachedAudio.add(ep.audio); return true; }
-    const r=await fetch(ep.audio); if(!r.ok) throw new Error('Fetch failed');
-    const buf=await r.arrayBuffer();
-    await dbPut(S_AUDIO,{url:ep.audio,data:buf,title:ep.title,at:Date.now()});
+    const r=await fetch(ep.audio); if(!r.ok) throw new Error();
+    await dbPut(S_AUDIO,{url:ep.audio,data:await r.arrayBuffer(),title:ep.title,at:Date.now()});
     cachedAudio.add(ep.audio); return true;
   }catch(e){ return false; }
 }
 
 async function downloadCurrent(){
   const ep=episodes[curIdx]; if(!ep?.audio) return;
-  if(cachedAudio.has(ep.audio)){ toast('Already downloaded ✓'); return; }
+  if(cachedAudio.has(ep.audio)){ toast('Already saved ✓'); return; }
   toast('Downloading…',5000);
   const ok=await downloadEp(ep);
   toast(ok?'✓ Saved for offline listening':'Download failed — check connection');
-  updateDLBtn(); updateStats(); renderList('eps-list',episodes); renderHoriz();
+  updateDLBtn(); updateStorInfo(); renderFiltered(); renderHoriz();
 }
 
 async function downloadAll(){
@@ -638,18 +1091,21 @@ async function downloadAll(){
   btn.disabled=true; wrap.classList.add('show');
   let done=0;
   for(const ep of episodes){
-    label.textContent=`Downloading ${done+1}/${episodes.length}: ${ep.title.slice(0,35)}…`;
+    label.textContent=`${done+1}/${episodes.length}: ${ep.title.slice(0,40)}…`;
     await downloadEp(ep); done++;
     fill.style.width=(done/episodes.length*100)+'%';
   }
   wrap.classList.remove('show'); btn.disabled=false;
-  document.getElementById('dl-status').textContent=`${cachedAudio.size} of ${episodes.length} downloaded`;
   toast(`✓ ${cachedAudio.size} episodes saved offline`);
-  updateStats(); updateStorInfo(); renderList('eps-list',episodes); renderHoriz();
+  document.getElementById('dl-status').textContent=`${cachedAudio.size} of ${episodes.length} downloaded`;
+  updateStorInfo(); renderFiltered(); renderHoriz(); document.getElementById('stat-dl').textContent=cachedAudio.size;
 }
 
-function updateStats(){ document.getElementById('stat-dl').textContent=cachedAudio.size; }
-async function updateDLBtn(){ const ep=episodes[curIdx]; const c=cachedAudio.has(ep?.audio); document.getElementById('dl-lbl').textContent=c?'Saved ✓':'Download'; document.getElementById('eb-dl').classList.toggle('on',c); }
+async function updateDLBtn(){
+  const ep=episodes[curIdx]; const c=cachedAudio.has(ep?.audio);
+  document.getElementById('dl-lbl').textContent=c?'Saved ✓':'Download';
+  document.getElementById('eb-dl').classList.toggle('on',c);
+}
 
 async function updateStorInfo(){
   if(!db) return;
@@ -671,15 +1127,36 @@ async function clearCache(){
   catch(e){ toast('Error clearing cache'); }
 }
 
-// ══ FAVOURITES ══
-function toggleFav(){ const ep=episodes[curIdx]; if(!ep) return; if(favs.has(ep.index)) favs.delete(ep.index); else favs.add(ep.index); localStorage.setItem('acs_favs',JSON.stringify([...favs])); updateFavBtn(); toast(favs.has(ep.index)?'Added to favourites':'Removed from favourites'); }
-function updateFavBtn(){ const on=favs.has(episodes[curIdx]?.index); const b=document.getElementById('eb-fav'); b.classList.toggle('on',on); b.querySelector('svg').style.fill=on?'var(--or)':''; }
+// ══════════════════════════════════════
+// FAVOURITES
+// ══════════════════════════════════════
+function toggleFav(){
+  const ep=episodes[curIdx]; if(!ep) return;
+  if(favs.has(ep.index)) favs.delete(ep.index); else favs.add(ep.index);
+  localStorage.setItem('acs_favs',JSON.stringify([...favs]));
+  updateFavBtn(); renderFavsList();
+  toast(favs.has(ep.index)?'♥ Added to favourites':'Removed from favourites');
+}
+function updateFavBtn(){
+  const on=favs.has(episodes[curIdx]?.index);
+  const b=document.getElementById('eb-fav');
+  b.classList.toggle('on',on);
+  b.querySelector('svg').style.fill=on?'var(--or)':'';
+}
 
-// ══ MISC ══
-function shareEp(){ const ep=episodes[curIdx]; if(!ep) return; if(navigator.share) navigator.share({title:ep.title,url:'https://africanchildrenstories.edutab.africa/'}).catch(()=>{}); else{ navigator.clipboard?.writeText('https://africanchildrenstories.edutab.africa/').then(()=>toast('Link copied!')).catch(()=>{}); } }
+// ══════════════════════════════════════
+// SHARE / SITE
+// ══════════════════════════════════════
+function shareEp(){
+  const ep=episodes[curIdx]; if(!ep) return;
+  if(navigator.share) navigator.share({title:ep.title,url:'https://africanchildrenstories.edutab.africa/'}).catch(()=>{});
+  else navigator.clipboard?.writeText('https://africanchildrenstories.edutab.africa/').then(()=>toast('Link copied!')).catch(()=>{});
+}
 function openSite(){ window.open('https://africanchildrenstories.edutab.africa/','_blank'); }
 
-// ══ AUDIO EVENTS ══
+// ══════════════════════════════════════
+// AUDIO EVENTS
+// ══════════════════════════════════════
 aud.addEventListener('timeupdate',()=>{
   if(!aud.duration) return;
   const p=(aud.currentTime/aud.duration)*100;
@@ -687,20 +1164,77 @@ aud.addEventListener('timeupdate',()=>{
   document.getElementById('mini-fill').style.width=p+'%';
   document.getElementById('cur-t').textContent=ft(aud.currentTime);
   document.getElementById('tot-t').textContent=ft(aud.duration);
+  if('mediaSession' in navigator && aud.duration) {
+    try{ navigator.mediaSession.setPositionState({duration:aud.duration,playbackRate:aud.playbackRate,position:aud.currentTime}); }catch(e){}
+  }
+  // Auto-save position every 5s
+  clearTimeout(progSaveT);
+  progSaveT=setTimeout(saveProgress,5000);
+  // Sleep on end of episode
+  if(sleepEndEp && p>99){ aud.pause(); cancelSleep(); toast('😴 Sleep timer ended'); }
 });
-aud.addEventListener('ended',()=>{ setPlaying(false); playNext(); });
+
+aud.addEventListener('ended',()=>{
+  markPlayed(curIdx);
+  saveProgress();
+  if(sleepEndEp){ cancelSleep(); setPlaying(false); return; }
+  setPlaying(false);
+  playNext();
+});
 aud.addEventListener('play',()=>setPlaying(true));
-aud.addEventListener('pause',()=>setPlaying(false));
+aud.addEventListener('pause',()=>{ setPlaying(false); saveProgress(); });
 aud.addEventListener('error',()=>{ toast('Playback error — try downloading first'); setPlaying(false); });
 
-// ══ NAVIGATION ══
-function switchScreen(name){ if(name!=='player') prevScr=name; document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('ni-'+name); if(ni) ni.classList.add('active'); }
+// ══════════════════════════════════════
+// PULL TO REFRESH
+// ══════════════════════════════════════
+let ptrStart=0, ptrPulling=false;
+const epsScreen=document.getElementById('screen-episodes');
+epsScreen.addEventListener('touchstart',e=>{ if(epsScreen.scrollTop===0) ptrStart=e.touches[0].clientY; },{ passive:true });
+epsScreen.addEventListener('touchmove',e=>{
+  if(!ptrStart) return;
+  const dy=e.touches[0].clientY-ptrStart;
+  const ptr=document.getElementById('ptr');
+  if(dy>30&&epsScreen.scrollTop===0){ ptr.classList.add('pulling'); ptrPulling=true; document.getElementById('ptr-arrow').style.transform=`rotate(${Math.min(dy*2,180)}deg)`; }
+},{ passive:true });
+epsScreen.addEventListener('touchend',()=>{
+  if(ptrPulling){
+    ptrPulling=false; ptrStart=0;
+    const ptr=document.getElementById('ptr');
+    ptr.classList.remove('pulling'); ptr.classList.add('refreshing');
+    ptr.innerHTML='<div class="ptr-spin"></div>';
+    fetchRSS().then?.(()=>{ ptr.classList.remove('refreshing'); ptr.innerHTML=`<div class="ptr-arrow" id="ptr-arrow"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:var(--or)"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>`; toast('Refreshed'); });
+    setTimeout(()=>{ ptr.classList.remove('refreshing'); },3000);
+  } else ptrStart=0;
+},{ passive:true });
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function switchScreen(name){
+  if(name!=='player') prevScr=name;
+  const current=document.querySelector('.screen.active');
+  if(current) current.classList.remove('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+
+  const next=document.getElementById('screen-'+name);
+  if(next){ next.classList.add('active'); next.classList.add('slide-in'); setTimeout(()=>next.classList.remove('slide-in'),260); }
+  const ni=document.getElementById('ni-'+name); if(ni) ni.classList.add('active');
+
+  // Refresh favs when visiting
+  if(name==='favs'&&episodes.length) renderFavsList();
+  if(name==='about') updateStorInfo();
+}
 function goBack(){ switchScreen(prevScr); }
 
-// ══ SERVICE WORKER ══
+// ══════════════════════════════════════
+// SERVICE WORKER
+// ══════════════════════════════════════
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{});
 
-// ══ INIT ══
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
 openDB().then(d=>{ db=d; fetchRSS(); updateStorInfo(); }).catch(()=>fetchRSS());
 </script>
 </body>
