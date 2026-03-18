@@ -1,92 +1,77 @@
-// African Children's Stories - Service Worker v2
-const CACHE_NAME = 'acs-podcast-v2';
-const AUDIO_CACHE = 'acs-audio-v2';
+// African Children's Stories — Service Worker v4
+const CACHE = 'acs-shell-v4';
+const AUDIO_CACHE = 'acs-audio-v4';
 
-// Assets to pre-cache on install
-const STATIC_ASSETS = [
-  './african-childrens-stories-podcast.html',
-  './sw.js'
-];
+const SHELL = ['./african-childrens-stories-podcast.html', './sw.js'];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)).then(() => self.skipWaiting())
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== AUDIO_CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME && k !== AUDIO_CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
-});
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
 
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-
-  // Audio files — cache on first play, serve from cache offline
-  if (event.request.url.includes('.mp3') || event.request.url.includes('.m4a') || event.request.url.includes('audio')) {
-    event.respondWith(
+  // Audio — cache-first with background fetch
+  if (/\.(mp3|m4a|ogg|aac)(\?|$)/i.test(url.pathname) || url.pathname.includes('/audio/')) {
+    e.respondWith(
       caches.open(AUDIO_CACHE).then(cache =>
-        cache.match(event.request).then(cached => {
-          if (cached) return cached;
-          return fetch(event.request).then(response => {
-            // Only cache successful audio responses
-            if (response.ok && response.status === 200) {
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          }).catch(() => cached || new Response('Audio unavailable offline', { status: 503 }));
+        cache.match(e.request).then(hit => {
+          if (hit) return hit;
+          return fetch(e.request).then(res => {
+            if (res.ok) cache.put(e.request, res.clone());
+            return res;
+          }).catch(() => new Response('', { status: 503 }));
         })
       )
     );
     return;
   }
 
-  // RSS/API calls — network first, fall back to cache
+  // RSS proxies — network first, stale fallback
   if (url.hostname.includes('rss2json') || url.hostname.includes('allorigins') || url.hostname.includes('corsproxy')) {
-    event.respondWith(
-      fetch(event.request).then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      }).catch(() => caches.match(event.request))
+    e.respondWith(
+      fetch(e.request).then(res => {
+        caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+        return res;
+      }).catch(() => caches.match(e.request))
     );
     return;
   }
 
-  // Static assets — cache first
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      if (response.ok) {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-      }
-      return response;
+  // Google Fonts — cache forever
+  if (url.hostname.includes('fonts.')) {
+    e.respondWith(
+      caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+        caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+        return res;
+      }))
+    );
+    return;
+  }
+
+  // App shell — cache first
+  e.respondWith(
+    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+      if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+      return res;
     }).catch(() => caches.match('./african-childrens-stories-podcast.html')))
   );
 });
 
-// Message handler: cache a specific audio episode
-self.addEventListener('message', event => {
-  if (event.data.type === 'CACHE_AUDIO') {
-    const { url } = event.data;
-    caches.open(AUDIO_CACHE).then(cache =>
-      cache.match(url).then(existing => {
-        if (!existing) {
-          fetch(url).then(response => {
-            if (response.ok) cache.put(url, response);
-          }).catch(() => {});
-        }
-      })
-    );
-  }
-  if (event.data.type === 'GET_CACHED_AUDIO') {
-    caches.open(AUDIO_CACHE).then(cache =>
-      cache.keys().then(keys => {
-        event.source.postMessage({ type: 'CACHED_AUDIO_LIST', urls: keys.map(k => k.url) });
-      })
-    );
+// Message bridge
+self.addEventListener('message', e => {
+  if (e.data.type === 'SKIP_WAITING') self.skipWaiting();
+  if (e.data.type === 'GET_CACHED_AUDIO') {
+    caches.open(AUDIO_CACHE).then(c => c.keys()).then(keys => {
+      e.source.postMessage({ type: 'CACHED_AUDIO', urls: keys.map(k => k.url) });
+    });
   }
 });
