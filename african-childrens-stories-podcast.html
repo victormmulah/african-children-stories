@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#C4500A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ACS Podcast">
+<title>African Children's Stories Podcast</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --or:#E8650A;--or-l:#F4831F;--or-b:#FF9A3C;--or-d:#C4500A;--or-dp:#8B3A08;
+  --bg:#FFF5E8;--ww:#FFFBF5;--td:#1A0F00;--tm:#4A2C0A;--tl:#9B6030;
+  --sh:rgba(232,101,10,.15);--shs:rgba(232,101,10,.3);--r:20px;--rs:12px;--nav:68px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;background:#1a0f00;color:var(--td);overflow:hidden}
+#app{width:100%;max-width:430px;height:100dvh;max-height:900px;margin:0 auto;background:var(--bg);position:relative;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 80px rgba(0,0,0,.5)}
+.sb{height:44px;background:var(--or-d);display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;color:#fff;font-size:12px;font-weight:700}
+.sb .t{font-size:15px;font-weight:800}
+.sb-ic{display:flex;gap:5px;align-items:center}
+.sb-ic svg{width:14px;height:14px;fill:#fff}
+.offline-bar{background:var(--or-dp);color:#fff;font-size:12px;font-weight:700;text-align:center;padding:6px 12px;display:none;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
+.offline-bar.show{display:flex}
+.offline-bar svg{width:14px;height:14px;fill:#fff;flex-shrink:0}
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;display:none;flex-direction:column;padding-bottom:calc(var(--nav) + 12px);scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.active{display:flex}
+/* MINI PLAYER */
+.mini{background:var(--or);margin:0 10px 6px;border-radius:14px;padding:9px 12px;display:none;align-items:center;gap:10px;box-shadow:0 4px 16px var(--shs);cursor:pointer;flex-shrink:0;position:relative;z-index:50;transition:transform .15s}
+.mini.show{display:flex}
+.mini:active{transform:scale(.98)}
+.mini-th{width:38px;height:38px;border-radius:9px;flex-shrink:0;background:var(--or-d);overflow:hidden}
+.mini-th img{width:100%;height:100%;object-fit:cover}
+.mini-inf{flex:1;min-width:0}
+.mini-tit{font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini-sub{font-size:11px;color:rgba(255,255,255,.7);font-weight:600}
+.mini-ctrls{display:flex;gap:5px;align-items:center}
+.mini-btn{background:rgba(255,255,255,.2);border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.mini-btn svg{width:15px;height:15px;fill:#fff}
+.mini-prog{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.2);border-radius:0 0 14px 14px;overflow:hidden}
+.mini-fill{height:100%;background:#fff;width:0%;transition:width .5s linear}
+/* BOTTOM NAV */
+.bnav{height:var(--nav);background:#fff;border-top:1.5px solid rgba(232,101,10,.1);display:flex;align-items:center;flex-shrink:0;box-shadow:0 -4px 20px var(--sh);position:relative;z-index:100}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:8px 0;transition:all .2s;color:var(--tl);position:relative}
+.ni.active{color:var(--or)}
+.ni svg{width:22px;height:22px;transition:transform .2s}
+.ni.active svg{transform:scale(1.12)}
+.ni span{font-size:10px;font-weight:700;letter-spacing:.2px}
+.ndot{position:absolute;top:5px;width:4px;height:4px;background:var(--or);border-radius:50%;opacity:0;transition:opacity .2s}
+.ni.active .ndot{opacity:1}
+/* HOME */
+.h-head{background:linear-gradient(155deg,var(--or-dp) 0%,var(--or) 55%,var(--or-b) 100%);padding:18px 18px 28px;position:relative;overflow:hidden;flex-shrink:0}
+.h-head::before{content:'';position:absolute;width:220px;height:220px;background:rgba(255,255,255,.05);border-radius:50%;top:-80px;right:-50px}
+.h-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-wrap img{height:38px;object-fit:contain;filter:brightness(0) invert(1)}
+.logo-txt{font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:#fff;display:none}
+.h-ibtn{background:rgba(255,255,255,.15);border:none;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.h-ibtn svg{width:18px;height:18px;fill:#fff}
+.feat{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);border-radius:var(--r);padding:16px;backdrop-filter:blur(10px);display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .2s}
+.feat:active{transform:scale(.98)}
+.feat-th{width:68px;height:68px;border-radius:12px;flex-shrink:0;background:var(--or-dp);overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.feat-th img{width:100%;height:100%;object-fit:cover}
+.feat-inf{flex:1;min-width:0}
+.feat-badge{display:inline-block;background:rgba(255,255,255,.25);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;margin-bottom:5px;letter-spacing:.8px;text-transform:uppercase}
+.feat-tit{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feat-meta{font-size:11px;color:rgba(255,255,255,.75);font-weight:600}
+.feat-play{background:#fff;border:none;cursor:pointer;width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:transform .2s}
+.feat-play:active{transform:scale(.9)}
+.feat-play svg{width:17px;height:17px;fill:var(--or);margin-left:2px}
+.sec{padding:16px 16px 0}
+.sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sec-tit{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--td)}
+.sec-more{font-size:12px;font-weight:700;color:var(--or);cursor:pointer;background:none;border:none}
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px 6px}
+.hscroll::-webkit-scrollbar{display:none}
+.hcard{flex-shrink:0;width:144px;background:#fff;border-radius:var(--rs);overflow:hidden;cursor:pointer;box-shadow:0 2px 10px var(--sh);transition:transform .2s}
+.hcard:active{transform:scale(.97)}
+.hcard-th{width:100%;height:104px;background:linear-gradient(135deg,var(--or-l),var(--or-d));position:relative;overflow:hidden}
+.hcard-th img{width:100%;height:100%;object-fit:cover;position:absolute}
+.hcard-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.35),transparent)}
+.hcard-pl{position:absolute;width:34px;height:34px;background:rgba(255,255,255,.92);border-radius:50%;display:flex;align-items:center;justify-content:center;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hcard-pl svg{width:13px;height:13px;fill:var(--or);margin-left:2px}
+.ep-num{position:absolute;top:7px;left:7px;background:var(--or);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px}
+.dl-badge{position:absolute;top:7px;right:7px;background:rgba(0,0,0,.5);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.dl-badge svg{width:12px;height:12px;fill:#fff}
+.hcard-body{padding:9px}
+.hcard-tit{font-size:12px;font-weight:800;line-height:1.3;color:var(--td);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:3px}
+.hcard-dur{font-size:11px;color:var(--tl);font-weight:600}
+.li{background:#fff;border-radius:var(--rs);padding:12px;display:flex;gap:10px;cursor:pointer;margin-bottom:9px;box-shadow:0 2px 8px var(--sh);transition:transform .15s}
+.li:active{transform:scale(.99)}
+.li-th{width:56px;height:56px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--or-l),var(--or-d));overflow:hidden}
+.li-th img{width:100%;height:100%;object-fit:cover}
+.li-inf{flex:1;min-width:0}
+.li-tit{font-size:13px;font-weight:800;line-height:1.3;color:var(--td);margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.li-meta{font-size:11px;color:var(--tl);font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.li-meta svg{width:11px;height:11px;fill:var(--tl)}
+.li-dl{display:flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(232,101,10,.08);color:var(--or)}
+.li-dl svg{width:10px;height:10px;fill:var(--or)}
+.li-play{background:var(--or);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;flex-shrink:0;align-self:center;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px var(--shs);transition:transform .15s}
+.li-play:active{transform:scale(.9)}
+.li-play svg{width:13px;height:13px;fill:#fff;margin-left:2px}
+.li-play.pau svg{margin-left:0}
+/* EPISODES PAGE */
+.pg-head{background:linear-gradient(155deg,var(--or-dp) 0%,var(--or) 100%);padding:18px 18px 22px;color:#fff;flex-shrink:0}
+.pg-tit{font-family:'Baloo 2',cursive;font-size:21px;font-weight:800;margin-bottom:3px}
+.pg-sub{font-size:12px;color:rgba(255,255,255,.8);font-weight:600}
+.srch{margin:14px 16px 6px;background:#fff;border-radius:12px;display:flex;align-items:center;gap:9px;padding:11px 14px;box-shadow:0 2px 10px var(--sh);flex-shrink:0}
+.srch svg{width:16px;height:16px;fill:var(--tl);flex-shrink:0}
+.srch input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--td);background:transparent}
+.srch input::placeholder{color:var(--tl)}
+.ec{padding:6px 16px 10px;font-size:12px;font-weight:700;color:var(--tl);flex-shrink:0}
+.dl-bar{margin:0 16px 10px;background:#fff;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px var(--sh);flex-shrink:0}
+.dl-bar-info{flex:1;min-width:0}
+.dl-bar-tit{font-size:13px;font-weight:800;color:var(--td)}
+.dl-bar-sub{font-size:11px;color:var(--tl);font-weight:600}
+.dl-btn{background:var(--or);color:#fff;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;padding:7px 14px;border-radius:10px;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.dl-btn svg{width:14px;height:14px;fill:#fff}
+.dl-btn:disabled{background:var(--tl);cursor:default}
+.dl-prog-wrap{margin:0 16px 10px;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 2px 8px var(--sh);display:none;flex-shrink:0}
+.dl-prog-wrap.show{display:block}
+.dl-prog-label{font-size:12px;font-weight:700;color:var(--td);margin-bottom:6px}
+.dl-prog-bar{height:6px;background:rgba(232,101,10,.15);border-radius:10px;overflow:hidden}
+.dl-prog-fill{height:100%;background:linear-gradient(90deg,var(--or-d),var(--or-b));border-radius:10px;width:0%;transition:width .3s}
+/* PLAYER */
+.pl-screen{background:var(--ww)}
+.pl-head{background:linear-gradient(180deg,var(--or-dp) 0%,var(--or) 100%);padding:14px 18px 36px;display:flex;align-items:center;gap:10px;color:#fff;flex-shrink:0}
+.pl-back{background:rgba(255,255,255,.2);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.pl-back svg{width:19px;height:19px;fill:#fff}
+.pl-hi{flex:1;min-width:0}
+.pl-hl{font-size:10px;color:rgba(255,255,255,.65);font-weight:700;letter-spacing:.9px;text-transform:uppercase}
+.pl-ht{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-sh{background:rgba(255,255,255,.2);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.pl-sh svg{width:17px;height:17px;fill:#fff}
+.art-wrap{display:flex;justify-content:center;padding:0 36px;margin-top:-30px;position:relative;z-index:2;flex-shrink:0}
+.art{width:100%;max-width:260px;aspect-ratio:1;border-radius:22px;overflow:hidden;box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs);background:linear-gradient(135deg,var(--or-l),var(--or-d));position:relative;transition:box-shadow .5s}
+.art img{width:100%;height:100%;object-fit:cover}
+.art.on{animation:aPulse 2.5s ease-in-out infinite}
+@keyframes aPulse{0%,100%{box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs),0 0 0 0 rgba(232,101,10,.3)}50%{box-shadow:0 14px 44px rgba(0,0,0,.25),0 4px 14px var(--shs),0 0 0 14px rgba(232,101,10,0)}}
+.pl-offline{margin:8px 16px 0;background:rgba(139,58,8,.1);border-radius:10px;padding:7px 12px;display:none;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--or-dp);flex-shrink:0}
+.pl-offline.show{display:flex}
+.pl-offline svg{width:14px;height:14px;fill:var(--or-dp);flex-shrink:0}
+.pl-body{padding:14px 20px 0;flex-shrink:0}
+.pl-tit{font-family:'Baloo 2',cursive;font-size:18px;font-weight:800;color:var(--td);line-height:1.2;margin-bottom:3px;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-meta{text-align:center;font-size:12px;color:var(--tl);font-weight:600;margin-bottom:14px}
+.prog-bg{width:100%;height:5px;background:rgba(232,101,10,.15);border-radius:10px;cursor:pointer;position:relative;margin-bottom:6px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--or-d),var(--or-b));border-radius:10px;width:0%;transition:width .5s linear;position:relative}
+.prog-fill::after{content:'';position:absolute;right:-6px;top:50%;transform:translateY(-50%);width:13px;height:13px;background:var(--or);border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px var(--shs)}
+.prog-times{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--tl);margin-bottom:12px}
+.pl-ctrls{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
+.cb{background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.cb:active{transform:scale(.83)}
+.cb svg{fill:var(--tl)}
+.pp{width:64px;height:64px;background:linear-gradient(135deg,var(--or),var(--or-d));border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 18px var(--shs);transition:transform .15s,box-shadow .15s}
+.pp:active{transform:scale(.93);box-shadow:0 2px 8px var(--shs)}
+.pp svg{width:26px;height:26px;fill:#fff;margin-left:3px}
+.pp.pau svg{margin-left:0}
+.pl-ext{display:flex;justify-content:space-around;padding:4px 0 10px}
+.eb{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--tl);font-size:10px;font-weight:700;transition:color .2s}
+.eb svg{width:20px;height:20px;fill:currentColor}
+.eb.on{color:var(--or)}
+.pl-desc{margin:0 16px 12px;background:#fff;border-radius:var(--rs);padding:12px;box-shadow:0 2px 8px var(--sh);font-size:12px;line-height:1.65;color:var(--tm);max-height:100px;overflow-y:auto;scrollbar-width:none;flex-shrink:0}
+.pl-desc::-webkit-scrollbar{display:none}
+/* ABOUT */
+.ab-hero{background:linear-gradient(155deg,var(--or-dp) 0%,var(--or) 60%,var(--or-b) 100%);padding:28px 20px 36px;text-align:center;position:relative;overflow:hidden;flex-shrink:0}
+.ab-hero img{height:65px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:10px}
+.ab-htit{font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:6px}
+.ab-hsub{font-size:13px;color:rgba(255,255,255,.85);font-weight:600;line-height:1.5}
+.ab-body{padding:16px}
+.stats{display:flex;gap:8px;margin-bottom:12px}
+.stat{flex:1;background:#fff;border-radius:12px;padding:14px 10px;text-align:center;box-shadow:0 2px 10px var(--sh)}
+.stat-n{font-family:'Baloo 2',cursive;font-size:24px;font-weight:800;color:var(--or);line-height:1}
+.stat-l{font-size:10px;color:var(--tl);font-weight:700;margin-top:2px}
+.ab-card{background:#fff;border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:0 2px 10px var(--sh)}
+.ab-ctit{font-family:'Baloo 2',cursive;font-size:15px;font-weight:800;color:var(--or);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.ab-ctit svg{width:18px;height:18px;fill:var(--or)}
+.ab-card p{font-size:13px;line-height:1.65;color:var(--tm)}
+.ab-link{display:flex;align-items:center;gap:9px;background:var(--bg);border-radius:11px;padding:11px;margin-top:9px;cursor:pointer;text-decoration:none;color:var(--or-dp);font-weight:700;font-size:13px}
+.ab-link svg{width:16px;height:16px;fill:var(--or)}
+.stor-card{background:#fff;border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:0 2px 10px var(--sh)}
+.stor-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.stor-icon{width:36px;height:36px;background:rgba(232,101,10,.1);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stor-icon svg{width:18px;height:18px;fill:var(--or)}
+.stor-inf{flex:1}
+.stor-tit{font-size:13px;font-weight:800;color:var(--td)}
+.stor-sub{font-size:11px;color:var(--tl);font-weight:600}
+.stor-bar-bg{height:6px;background:rgba(232,101,10,.12);border-radius:10px;overflow:hidden;margin-bottom:5px}
+.stor-bar-fill{height:100%;background:linear-gradient(90deg,var(--or-d),var(--or-b));border-radius:10px;transition:width .5s}
+.stor-meta{font-size:11px;color:var(--tl);font-weight:600;text-align:right;margin-bottom:8px}
+.clr-btn{width:100%;background:rgba(232,101,10,.08);color:var(--or);border:1.5px solid rgba(232,101,10,.2);border-radius:10px;padding:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.clr-btn svg{width:14px;height:14px;fill:var(--or)}
+/* UTILS */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;gap:12px;color:var(--tl);font-weight:700;font-size:13px}
+.spin{width:36px;height:36px;border:3px solid rgba(232,101,10,.2);border-top-color:var(--or);border-radius:50%;animation:sp .75s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:36px 20px;color:var(--tl);font-weight:700;font-size:13px}
+.empty svg{width:44px;height:44px;fill:rgba(232,101,10,.25);display:block;margin:0 auto 10px}
+.toast{position:fixed;bottom:calc(var(--nav) + 80px);left:50%;transform:translateX(-50%) translateY(20px);background:var(--td);color:#fff;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div class="sb">
+  <span class="t" id="clock">9:41</span>
+  <div class="sb-ic">
+    <svg viewBox="0 0 24 24" id="net-icon"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+  </div>
+</div>
+
+<div class="offline-bar" id="offline-bar">
+  <svg viewBox="0 0 24 24"><path d="M22.99 9C19.15 5.16 13.8 3.76 8.84 4.78L11.3 7.24C14.7 6.88 18.23 8.05 20.78 10.6l2.21-1.6zM19 12.77l-2.34-2.34c-1.07-.51-2.25-.76-3.43-.79L16.88 13c.72.49 1.42 1.08 2.12 1.77zM2.93 2.06L1.44 3.55 4 6.11C2.52 7.1 1.17 8.3.01 9.75l2.18 1.58C3.42 9.9 4.97 8.71 6.72 7.86L8.55 9.7C7.09 10.22 5.7 11 4.46 12.11L6.64 13.7c.95-.88 2.07-1.55 3.29-1.97l2.47 2.47c-.6.15-1.17.38-1.71.68L14.02 18c.54-.51 1.2-.86 1.95-.99l3.38 3.38 1.5-1.5L2.93 2.06zm5.26 15.62l2.21 2.21 2.21-2.21c-1.24-1.24-3.18-1.24-4.42 0z"/></svg>
+  Offline — playing cached episodes
+</div>
+
+<div class="screens">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="h-head">
+      <div class="h-top">
+        <div class="logo-wrap">
+          <img src="African-Childrens-Stories-Podcast-Logo.jpeg" alt="ACS"
+               onerror="this.style.display='none';document.querySelector('.logo-txt').style.display='block'">
+          <div class="logo-txt">🎙 ACS Podcast</div>
+        </div>
+        <button class="h-ibtn" onclick="switchScreen('about')">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        </button>
+      </div>
+      <div class="feat" onclick="openPlayer(0)">
+        <div class="feat-th" id="feat-th"><div class="spin" style="width:22px;height:22px;border-width:2px"></div></div>
+        <div class="feat-inf">
+          <span class="feat-badge">Latest Episode</span>
+          <div class="feat-tit" id="feat-tit">Loading…</div>
+          <div class="feat-meta" id="feat-meta">African Children's Stories</div>
+        </div>
+        <button class="feat-play" onclick="event.stopPropagation();playEp(0)">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-tit">Recent Stories</div><button class="sec-more" onclick="switchScreen('episodes')">See all →</button></div>
+      <div class="hscroll" id="home-horiz"><div class="loading" style="padding:20px 50px"><div class="spin"></div></div></div>
+    </div>
+    <div class="sec" style="margin-top:4px">
+      <div class="sec-hd"><div class="sec-tit">All Episodes</div><button class="sec-more" onclick="switchScreen('episodes')">View all</button></div>
+      <div id="home-list"><div class="loading"><div class="spin"></div></div></div>
+    </div>
+  </div>
+
+  <!-- EPISODES -->
+  <div class="screen" id="screen-episodes">
+    <div class="pg-head">
+      <div class="pg-tit">All Episodes</div>
+      <div class="pg-sub" id="ep-sub">Loading…</div>
+    </div>
+    <div class="srch">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="srch-inp" placeholder="Search episodes…" oninput="filterEps(this.value)">
+    </div>
+    <div class="ec" id="ep-count">Loading…</div>
+    <div class="dl-bar">
+      <div class="dl-bar-info">
+        <div class="dl-bar-tit">Download All for Offline</div>
+        <div class="dl-bar-sub" id="dl-status">Save episodes to listen without internet</div>
+      </div>
+      <button class="dl-btn" id="dl-all-btn" onclick="downloadAll()">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Download
+      </button>
+    </div>
+    <div class="dl-prog-wrap" id="dl-prog-wrap">
+      <div class="dl-prog-label" id="dl-prog-label">Downloading…</div>
+      <div class="dl-prog-bar"><div class="dl-prog-fill" id="dl-prog-fill"></div></div>
+    </div>
+    <div style="padding:0 16px" id="eps-list"><div class="loading"><div class="spin"></div><span>Fetching stories…</span></div></div>
+  </div>
+
+  <!-- NOW PLAYING -->
+  <div class="screen pl-screen" id="screen-player">
+    <div class="pl-head">
+      <button class="pl-back" onclick="goBack()"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <div class="pl-hi">
+        <div class="pl-hl">Now Playing</div>
+        <div class="pl-ht" id="pl-head-tit">—</div>
+      </div>
+      <button class="pl-sh" onclick="shareEp()"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg></button>
+    </div>
+    <div class="art-wrap"><div class="art" id="art-el"><img id="pl-art" src="" alt="Artwork" onerror="this.style.opacity='0'"></div></div>
+    <div class="pl-offline" id="pl-offline"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Playing downloaded copy</div>
+    <div class="pl-body">
+      <div class="pl-tit" id="pl-tit">Loading…</div>
+      <div class="pl-meta" id="pl-meta">African Children's Stories</div>
+      <div class="prog-bg" onclick="seekAudio(event)"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-times"><span id="cur-t">0:00</span><span id="tot-t">0:00</span></div>
+      <div class="pl-ctrls">
+        <button class="cb" onclick="skipBack()" title="-15s"><svg viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M11.99 5V1l-5 5 5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6h-2c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8.01-8z" fill="#9B6030"/></svg></button>
+        <button class="cb" onclick="playPrev()"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" fill="#9B6030"/></svg></button>
+        <button class="pp" id="pp-btn" onclick="togglePlay()"><svg viewBox="0 0 24 24" id="pp-icon"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="cb" onclick="playNext()"><svg viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M6 18l8.5-6L6 6v12zm8.5-6L18 18V6z" fill="#9B6030"/></svg></button>
+        <button class="cb" onclick="skipFwd()" title="+30s"><svg viewBox="0 0 24 24" style="width:26px;height:26px"><path d="M12.01 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 7.99-8z" fill="#9B6030"/></svg></button>
+      </div>
+      <div class="pl-ext">
+        <button class="eb" id="eb-spd" onclick="cycleSpeed()"><svg viewBox="0 0 24 24"><path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"/></svg><span id="spd-lbl">1×</span></button>
+        <button class="eb" id="eb-dl" onclick="downloadCurrent()"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg><span id="dl-lbl">Download</span></button>
+        <button class="eb" id="eb-fav" onclick="toggleFav()"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>Favourite</span></button>
+        <button class="eb" onclick="openSite()"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg><span>Website</span></button>
+      </div>
+    </div>
+    <div class="pl-desc" id="pl-desc">Loading…</div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="screen" id="screen-about">
+    <div class="ab-hero">
+      <img src="African-Childrens-Stories-Podcast-Logo.jpeg" alt="Logo" onerror="this.style.display='none'">
+      <div class="ab-htit">African Children's Stories</div>
+      <div class="ab-hsub">Celebrating African culture through the magic of storytelling.</div>
+    </div>
+    <div class="ab-body">
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="stat-n">–</div><div class="stat-l">Episodes</div></div>
+        <div class="stat"><div class="stat-n" id="stat-dl">0</div><div class="stat-l">Downloaded</div></div>
+        <div class="stat"><div class="stat-n">🌍</div><div class="stat-l">Pan-African</div></div>
+      </div>
+      <div class="stor-card">
+        <div class="stor-row">
+          <div class="stor-icon"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>
+          <div class="stor-inf"><div class="stor-tit">Offline Storage</div><div class="stor-sub" id="stor-sub">Calculating…</div></div>
+        </div>
+        <div class="stor-bar-bg"><div class="stor-bar-fill" id="stor-bar" style="width:0%"></div></div>
+        <div class="stor-meta" id="stor-meta">0 MB used</div>
+        <button class="clr-btn" onclick="clearCache()"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Clear Downloaded Episodes</button>
+      </div>
+      <div class="ab-card">
+        <div class="ab-ctit"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>About</div>
+        <p>African Children's Stories brings the rich tapestry of African folklore, fables, and original stories to children around the world — free to listen, always.</p>
+        <a class="ab-link" href="https://africanchildrenstories.edutab.africa/" target="_blank">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Visit Website
+        </a>
+      </div>
+      <div class="ab-card">
+        <div class="ab-ctit"><svg viewBox="0 0 24 24"><path d="M22.99 9C19.15 5.16 13.8 3.76 8.84 4.78L11.3 7.24C14.7 6.88 18.23 8.05 20.78 10.6l2.21-1.6zM19 12.77l-2.34-2.34c-1.07-.51-2.25-.76-3.43-.79L16.88 13c.72.49 1.42 1.08 2.12 1.77zM2.93 2.06L1.44 3.55 4 6.11C2.52 7.1 1.17 8.3.01 9.75l2.18 1.58C3.42 9.9 4.97 8.71 6.72 7.86L8.55 9.7C7.09 10.22 5.7 11 4.46 12.11L6.64 13.7c.95-.88 2.07-1.55 3.29-1.97l2.47 2.47c-.6.15-1.17.38-1.71.68L14.02 18c.54-.51 1.2-.86 1.95-.99l3.38 3.38 1.5-1.5L2.93 2.06zm5.26 15.62l2.21 2.21 2.21-2.21c-1.24-1.24-3.18-1.24-4.42 0z"/></svg>How Offline Works</div>
+        <p>Tap ↓ Download on any episode to save it. Episodes play even without internet — ideal for areas with limited data coverage.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screens -->
+
+<div class="mini" id="mini" onclick="switchScreen('player')">
+  <div class="mini-th"><img id="mini-th" src="" alt=""></div>
+  <div class="mini-inf">
+    <div class="mini-tit" id="mini-tit">—</div>
+    <div class="mini-sub" id="mini-sub">Tap to open</div>
+  </div>
+  <div class="mini-ctrls" onclick="event.stopPropagation()">
+    <button class="mini-btn" onclick="togglePlay()"><svg viewBox="0 0 24 24" id="mini-icon"><path d="M8 5v14l11-7z"/></svg></button>
+    <button class="mini-btn" onclick="playNext()"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm8.5-6L18 18V6z"/></svg></button>
+  </div>
+  <div class="mini-prog"><div class="mini-fill" id="mini-fill"></div></div>
+</div>
+
+<nav class="bnav">
+  <div class="ni active" id="ni-home" onclick="switchScreen('home')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></div>
+  <div class="ni" id="ni-episodes" onclick="switchScreen('episodes')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M3 9h14V7H3v2zm0 4h14v-2H3v2zm0 4h14v-2H3v2zm16 0h2v-2h-2v2zm0-10v2h2V7h-2zm0 6h2v-2h-2v2z"/></svg><span>Episodes</span></div>
+  <div class="ni" id="ni-player" onclick="switchScreen('player')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><span>Playing</span></div>
+  <div class="ni" id="ni-about" onclick="switchScreen('about')"><div class="ndot"></div><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg><span>About</span></div>
+</nav>
+
+<div class="toast" id="toast"></div>
+</div>
+<audio id="aud"></audio>
+
+<script>
+// ══ STATE ══
+const DB_NAME='acs-v3', DB_VER=2, S_META='episodes', S_AUDIO='audio';
+let episodes=[], curIdx=0, playing=false;
+let spdIdx=0; const SPEEDS=[1,1.25,1.5,2,0.75];
+let prevScr='home', db=null, cachedAudio=new Set();
+let favs=new Set(JSON.parse(localStorage.getItem('acs_favs')||'[]'));
+
+const aud=document.getElementById('aud');
+
+// ══ CLOCK ══
+(function tick(){ const n=new Date(); document.getElementById('clock').textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes(); setTimeout(tick,30000); })();
+
+// ══ ONLINE STATE ══
+function setOnline(v){ document.getElementById('offline-bar').classList.toggle('show',!v); document.getElementById('net-icon').style.opacity=v?'1':'0.4'; }
+window.addEventListener('online',()=>{ setOnline(true); if(!episodes.length) fetchRSS(); });
+window.addEventListener('offline',()=>setOnline(false));
+setOnline(navigator.onLine);
+
+// ══ INDEXEDDB ══
+function openDB(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,DB_VER); r.onupgradeneeded=e=>{ const d=e.target.result; if(!d.objectStoreNames.contains(S_META)) d.createObjectStore(S_META,{keyPath:'index'}); if(!d.objectStoreNames.contains(S_AUDIO)) d.createObjectStore(S_AUDIO,{keyPath:'url'}); }; r.onsuccess=e=>res(e.target.result); r.onerror=e=>rej(e); }); }
+function dbPut(s,o){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readwrite'); tx.objectStore(s).put(o).onsuccess=e=>res(e.target.result); tx.onerror=rej; }catch(e){rej(e);} }); }
+function dbGet(s,k){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readonly'); const r=tx.objectStore(s).get(k); r.onsuccess=e=>res(e.target.result); r.onerror=rej; }catch(e){rej(e);} }); }
+function dbGetAll(s){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readonly'); const r=tx.objectStore(s).getAll(); r.onsuccess=e=>res(e.target.result); r.onerror=rej; }catch(e){rej(e);} }); }
+function dbClear(s){ return new Promise((res,rej)=>{ try{ const tx=db.transaction(s,'readwrite'); tx.objectStore(s).clear().onsuccess=()=>res(); tx.onerror=rej; }catch(e){rej(e);} }); }
+
+// ══ RSS FETCH — 3 proxy strategies ══
+const PROXIES=[
+  ()=>`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://anchor.fm/s/2d3bd0d0/podcast/rss')}&count=200`,
+  ()=>`https://api.allorigins.win/get?url=${encodeURIComponent('https://anchor.fm/s/2d3bd0d0/podcast/rss')}`,
+  ()=>`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/2d3bd0d0/podcast/rss')}`,
+];
+
+async function fetchRSS(){
+  // Strategy 1: rss2json JSON API
+  try{
+    const r=await fetch(PROXIES[0](),{signal:AbortSignal.timeout(9000)});
+    if(r.ok){ const d=await r.json(); if(d.status==='ok'&&d.items?.length){ fromRSS2JSON(d); return; } }
+  }catch(e){}
+  // Strategy 2: allorigins raw XML
+  try{
+    const r=await fetch(PROXIES[1](),{signal:AbortSignal.timeout(9000)});
+    if(r.ok){ const d=await r.json(); if(d.contents){ fromXML(d.contents); return; } }
+  }catch(e){}
+  // Strategy 3: corsproxy raw XML
+  try{
+    const r=await fetch(PROXIES[2](),{signal:AbortSignal.timeout(9000)});
+    if(r.ok){ fromXML(await r.text()); return; }
+  }catch(e){}
+  // Fallback: IndexedDB cache
+  fromDB();
+}
+
+function fromRSS2JSON(d){
+  const feed=d.feed;
+  episodes=d.items.map((it,i)=>({
+    index:i, title:it.title||`Episode ${i+1}`,
+    desc:clean(it.description||it.content||''),
+    audio:it.enclosure?.link||'',
+    duration:it.itunes_duration||'',
+    pubDate:it.pubDate||'',
+    img:it.thumbnail||it.enclosure?.thumbnail||feed?.image||'',
+  }));
+  saveMeta(); renderAll();
+}
+
+function fromXML(xml){
+  const doc=new DOMParser().parseFromString(xml,'text/xml');
+  if(doc.querySelector('parsererror')){ fromDB(); return; }
+  const items=doc.querySelectorAll('item');
+  const podImg=doc.querySelector('channel > image > url')?.textContent||'';
+  const NS='http://www.itunes.com/dtds/podcast-1.0.dtd';
+  episodes=Array.from(items).map((it,i)=>({
+    index:i, title:it.querySelector('title')?.textContent?.trim()||`Episode ${i+1}`,
+    desc:clean(it.querySelector('description')?.textContent||''),
+    audio:it.querySelector('enclosure')?.getAttribute('url')||'',
+    duration:it.getElementsByTagNameNS(NS,'duration')[0]?.textContent?.trim()||'',
+    pubDate:it.querySelector('pubDate')?.textContent?.trim()||'',
+    img:it.getElementsByTagNameNS(NS,'image')[0]?.getAttribute('href')||podImg||'',
+  }));
+  saveMeta(); renderAll();
+}
+
+async function fromDB(){
+  try{
+    const stored=await dbGetAll(S_META);
+    if(stored?.length){ episodes=stored.sort((a,b)=>a.index-b.index); renderAll(); toast('Showing saved episodes'); }
+    else errState();
+  }catch(e){ errState(); }
+}
+
+async function saveMeta(){ if(!db) return; for(const ep of episodes) try{ await dbPut(S_META,ep); }catch(e){} }
+
+function errState(){
+  const m='<div class="empty"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>Could not load episodes.<br>Check your connection.</div>';
+  document.getElementById('home-horiz').innerHTML=m;
+  document.getElementById('home-list').innerHTML='';
+  document.getElementById('eps-list').innerHTML=m;
+}
+
+// ══ HELPERS ══
+function clean(s){ return s.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'').trim(); }
+function dur(s){ if(!s) return ''; if(s.includes(':')){ const p=s.split(':'); return p.length===3?`${p[0]}h ${p[1]}m`:`${p[0]}m`; } const n=parseInt(s); return n?Math.floor(n/60)+'m':''; }
+function dt(s){ if(!s) return ''; try{ return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }catch(e){ return ''; } }
+function ft(s){ if(!s||isNaN(s)) return '0:00'; const m=Math.floor(s/60),ss=Math.floor(s%60); return m+':'+(ss<10?'0':'')+ss; }
+function toast(msg,dur=2500){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur); }
+
+// ══ RENDER ══
+async function renderAll(){
+  if(!episodes.length){ errState(); return; }
+  try{ const blobs=await dbGetAll(S_AUDIO); cachedAudio=new Set(blobs.map(b=>b.url)); }catch(e){}
+  document.getElementById('stat-n').textContent=episodes.length;
+  document.getElementById('stat-dl').textContent=cachedAudio.size;
+  document.getElementById('ep-sub').textContent=`${episodes.length} episodes`;
+  document.getElementById('ep-count').textContent=`${episodes.length} episodes`;
+  document.getElementById('dl-status').textContent=cachedAudio.size?`${cachedAudio.size} of ${episodes.length} downloaded`:'Save episodes to listen without internet';
+  renderFeat(); renderHoriz(); renderList('home-list',episodes.slice(0,6)); renderList('eps-list',episodes); updateStorInfo();
+}
+
+function renderFeat(){
+  const ep=episodes[0]; if(!ep) return;
+  document.getElementById('feat-th').innerHTML=ep.img?`<img src="${ep.img}" onerror="this.style.opacity='0'" style="width:100%;height:100%;object-fit:cover">`:'<svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:rgba(255,255,255,.5)"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>';
+  document.getElementById('feat-tit').textContent=ep.title;
+  document.getElementById('feat-meta').textContent=dt(ep.pubDate)||'African Children\'s Stories';
+}
+
+function renderHoriz(){
+  document.getElementById('home-horiz').innerHTML=episodes.slice(0,8).map((ep,i)=>`
+    <div class="hcard" onclick="openPlayer(${i})">
+      <div class="hcard-th">
+        ${ep.img?`<img src="${ep.img}" onerror="this.style.display='none'">`:''}
+        <div class="hcard-ov"></div>
+        <span class="ep-num">#${episodes.length-i}</span>
+        ${cachedAudio.has(ep.audio)?`<div class="dl-badge"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></div>`:''}
+        <div class="hcard-pl"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+      <div class="hcard-body">
+        <div class="hcard-tit">${ep.title}</div>
+        <div class="hcard-dur">${dur(ep.duration)||dt(ep.pubDate)||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderList(id,eps){
+  const el=document.getElementById(id);
+  if(!eps.length){ el.innerHTML='<div class="empty">No episodes found.</div>'; return; }
+  el.innerHTML=eps.map(ep=>`
+    <div class="li" onclick="openPlayer(${ep.index})">
+      <div class="li-th">${ep.img?`<img src="${ep.img}" onerror="this.style.opacity='0'">`:''}  </div>
+      <div class="li-inf">
+        <div class="li-tit">${ep.title}</div>
+        <div class="li-meta">
+          ${ep.duration?`<span><svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>${dur(ep.duration)}</span>`:''}
+          ${ep.pubDate?`<span>${dt(ep.pubDate)}</span>`:''}
+          ${cachedAudio.has(ep.audio)?`<span class="li-dl"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Saved</span>`:''}
+        </div>
+      </div>
+      <button class="li-play ${curIdx===ep.index&&playing?'pau':''}" onclick="event.stopPropagation();playEp(${ep.index})">
+        <svg viewBox="0 0 24 24">${curIdx===ep.index&&playing?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>'}</svg>
+      </button>
+    </div>`).join('');
+}
+
+function filterEps(q){
+  const f=q.trim()?episodes.filter(ep=>ep.title.toLowerCase().includes(q.toLowerCase())||ep.desc.toLowerCase().includes(q.toLowerCase())):episodes;
+  document.getElementById('ep-count').textContent=`${f.length} of ${episodes.length} episodes`;
+  renderList('eps-list',f);
+}
+
+// ══ PLAYER ══
+async function openPlayer(idx){
+  curIdx=idx; const ep=episodes[idx]; if(!ep) return;
+  document.getElementById('pl-head-tit').textContent=ep.title;
+  document.getElementById('pl-tit').textContent=ep.title;
+  document.getElementById('pl-meta').textContent=(dt(ep.pubDate)||'')+(ep.duration?` · ${dur(ep.duration)}`:'');
+  document.getElementById('pl-desc').textContent=ep.desc||'No description available.';
+  document.getElementById('pl-art').src=ep.img||'';
+  document.getElementById('mini-tit').textContent=ep.title;
+  if(ep.img) document.getElementById('mini-th').src=ep.img;
+  updateFavBtn(); updateDLBtn();
+  switchScreen('player');
+
+  // Use cached blob if available, else stream
+  const offEl=document.getElementById('pl-offline');
+  try{
+    const blob=db?await dbGet(S_AUDIO,ep.audio):null;
+    if(blob?.data){
+      const url=URL.createObjectURL(new Blob([blob.data],{type:'audio/mpeg'}));
+      if(aud.src!==url){ aud.src=url; aud.load(); }
+      offEl.classList.add('show');
+    } else {
+      if(ep.audio&&aud.src!==ep.audio){ aud.src=ep.audio; aud.load(); }
+      offEl.classList.remove('show');
+    }
+  }catch(e){ if(ep.audio&&aud.src!==ep.audio){ aud.src=ep.audio; aud.load(); } offEl.classList.remove('show'); }
+}
+
+function playEp(idx){ openPlayer(idx).then(()=>{ aud.play().then(()=>setPlaying(true)).catch(()=>{}); }); }
+
+function togglePlay(){
+  if(!aud.src&&episodes.length){ playEp(curIdx); return; }
+  if(playing){ aud.pause(); }
+  else{ aud.play().then(()=>setPlaying(true)).catch(e=>toast('Cannot play: '+e.message)); }
+}
+
+function setPlaying(v){
+  playing=v;
+  const pi=`<path d="${v?'M6 19h4V5H6v14zm8-14v14h4V5h-4z':'M8 5v14l11-7z'}"/>`;
+  document.getElementById('pp-icon').innerHTML=pi;
+  document.getElementById('mini-icon').innerHTML=pi;
+  document.getElementById('pp-btn').classList.toggle('pau',v);
+  document.getElementById('mini-sub').textContent=v?'Now playing':'Paused';
+  document.getElementById('mini').classList.add('show');
+  document.getElementById('art-el').classList.toggle('on',v);
+  document.querySelectorAll('.li-play').forEach(b=>{
+    const m=b.getAttribute('onclick')?.match(/\d+/); const i=m?parseInt(m[0]):-1;
+    b.classList.toggle('pau',i===curIdx&&v);
+    b.innerHTML=`<svg viewBox="0 0 24 24">${i===curIdx&&v?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>'}</svg>`;
+  });
+}
+
+function playNext(){ if(curIdx<episodes.length-1) playEp(curIdx+1); }
+function playPrev(){ if(aud.currentTime>3){aud.currentTime=0;return;} if(curIdx>0) playEp(curIdx-1); }
+function skipBack(){ aud.currentTime=Math.max(0,aud.currentTime-15); }
+function skipFwd(){ aud.currentTime=Math.min(aud.duration||0,aud.currentTime+30); }
+function seekAudio(e){ if(!aud.duration) return; const r=e.currentTarget.getBoundingClientRect(); aud.currentTime=((e.clientX-r.left)/r.width)*aud.duration; }
+function cycleSpeed(){ spdIdx=(spdIdx+1)%SPEEDS.length; aud.playbackRate=SPEEDS[spdIdx]; document.getElementById('spd-lbl').textContent=SPEEDS[spdIdx]+'×'; }
+
+// ══ DOWNLOAD ══
+async function downloadEp(ep){
+  if(!ep?.audio||!db) return false;
+  try{
+    const ex=await dbGet(S_AUDIO,ep.audio); if(ex?.data){ cachedAudio.add(ep.audio); return true; }
+    const r=await fetch(ep.audio); if(!r.ok) throw new Error('Fetch failed');
+    const buf=await r.arrayBuffer();
+    await dbPut(S_AUDIO,{url:ep.audio,data:buf,title:ep.title,at:Date.now()});
+    cachedAudio.add(ep.audio); return true;
+  }catch(e){ return false; }
+}
+
+async function downloadCurrent(){
+  const ep=episodes[curIdx]; if(!ep?.audio) return;
+  if(cachedAudio.has(ep.audio)){ toast('Already downloaded ✓'); return; }
+  toast('Downloading…',5000);
+  const ok=await downloadEp(ep);
+  toast(ok?'✓ Saved for offline listening':'Download failed — check connection');
+  updateDLBtn(); updateStats(); renderList('eps-list',episodes); renderHoriz();
+}
+
+async function downloadAll(){
+  if(!episodes.length) return;
+  const btn=document.getElementById('dl-all-btn');
+  const wrap=document.getElementById('dl-prog-wrap');
+  const fill=document.getElementById('dl-prog-fill');
+  const label=document.getElementById('dl-prog-label');
+  btn.disabled=true; wrap.classList.add('show');
+  let done=0;
+  for(const ep of episodes){
+    label.textContent=`Downloading ${done+1}/${episodes.length}: ${ep.title.slice(0,35)}…`;
+    await downloadEp(ep); done++;
+    fill.style.width=(done/episodes.length*100)+'%';
+  }
+  wrap.classList.remove('show'); btn.disabled=false;
+  document.getElementById('dl-status').textContent=`${cachedAudio.size} of ${episodes.length} downloaded`;
+  toast(`✓ ${cachedAudio.size} episodes saved offline`);
+  updateStats(); updateStorInfo(); renderList('eps-list',episodes); renderHoriz();
+}
+
+function updateStats(){ document.getElementById('stat-dl').textContent=cachedAudio.size; }
+async function updateDLBtn(){ const ep=episodes[curIdx]; const c=cachedAudio.has(ep?.audio); document.getElementById('dl-lbl').textContent=c?'Saved ✓':'Download'; document.getElementById('eb-dl').classList.toggle('on',c); }
+
+async function updateStorInfo(){
+  if(!db) return;
+  try{
+    const blobs=await dbGetAll(S_AUDIO);
+    const bytes=blobs.reduce((s,b)=>s+(b.data?.byteLength||0),0);
+    const mb=(bytes/1024/1024).toFixed(1);
+    document.getElementById('stor-bar').style.width=Math.min(bytes/(500*1024*1024)*100,100)+'%';
+    document.getElementById('stor-meta').textContent=mb+' MB used';
+    document.getElementById('stor-sub').textContent=blobs.length?`${blobs.length} episodes saved`:'No episodes saved yet';
+    document.getElementById('stat-dl').textContent=blobs.length;
+    cachedAudio=new Set(blobs.map(b=>b.url));
+  }catch(e){}
+}
+
+async function clearCache(){
+  if(!confirm('Delete all downloaded episodes?')) return;
+  try{ await dbClear(S_AUDIO); cachedAudio.clear(); updateStorInfo(); renderAll(); toast('Downloads cleared'); }
+  catch(e){ toast('Error clearing cache'); }
+}
+
+// ══ FAVOURITES ══
+function toggleFav(){ const ep=episodes[curIdx]; if(!ep) return; if(favs.has(ep.index)) favs.delete(ep.index); else favs.add(ep.index); localStorage.setItem('acs_favs',JSON.stringify([...favs])); updateFavBtn(); toast(favs.has(ep.index)?'Added to favourites':'Removed from favourites'); }
+function updateFavBtn(){ const on=favs.has(episodes[curIdx]?.index); const b=document.getElementById('eb-fav'); b.classList.toggle('on',on); b.querySelector('svg').style.fill=on?'var(--or)':''; }
+
+// ══ MISC ══
+function shareEp(){ const ep=episodes[curIdx]; if(!ep) return; if(navigator.share) navigator.share({title:ep.title,url:'https://africanchildrenstories.edutab.africa/'}).catch(()=>{}); else{ navigator.clipboard?.writeText('https://africanchildrenstories.edutab.africa/').then(()=>toast('Link copied!')).catch(()=>{}); } }
+function openSite(){ window.open('https://africanchildrenstories.edutab.africa/','_blank'); }
+
+// ══ AUDIO EVENTS ══
+aud.addEventListener('timeupdate',()=>{
+  if(!aud.duration) return;
+  const p=(aud.currentTime/aud.duration)*100;
+  document.getElementById('prog-fill').style.width=p+'%';
+  document.getElementById('mini-fill').style.width=p+'%';
+  document.getElementById('cur-t').textContent=ft(aud.currentTime);
+  document.getElementById('tot-t').textContent=ft(aud.duration);
+});
+aud.addEventListener('ended',()=>{ setPlaying(false); playNext(); });
+aud.addEventListener('play',()=>setPlaying(true));
+aud.addEventListener('pause',()=>setPlaying(false));
+aud.addEventListener('error',()=>{ toast('Playback error — try downloading first'); setPlaying(false); });
+
+// ══ NAVIGATION ══
+function switchScreen(name){ if(name!=='player') prevScr=name; document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); const ni=document.getElementById('ni-'+name); if(ni) ni.classList.add('active'); }
+function goBack(){ switchScreen(prevScr); }
+
+// ══ SERVICE WORKER ══
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{});
+
+// ══ INIT ══
+openDB().then(d=>{ db=d; fetchRSS(); updateStorInfo(); }).catch(()=>fetchRSS());
+</script>
+</body>
+</html>
